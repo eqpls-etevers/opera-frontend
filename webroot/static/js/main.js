@@ -12,12 +12,17 @@ var main = () => {
 		}
 	);
 	
-	fetch('/vra/catalog/api/items', {
-		headers: window.common.auth.apiHeaders
+	fetch(`/vra/csp/gateway/am/api/auth/api-tokens/authorize?refresh_token=${window.common.auth.refreshToken}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Accept": "application/json"
+		},
+		body: ""
 	}).then((res)=> {
 		if (res.ok) { return res.json(); }
 		console.error(res);
-		throw res;
+		throw res
 	}).then((data)=> {
 		console.log(data);
 	});
