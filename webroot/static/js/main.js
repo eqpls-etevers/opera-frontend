@@ -12,7 +12,7 @@ var main = () => {
 		}
 	);
 	
-	fetch(`https://ariavra.sddc.lab/iaas/api/login`, {
+	fetch(`/vra/iaas/api/login`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
