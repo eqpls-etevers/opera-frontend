@@ -12,7 +12,7 @@ var main = () => {
 		}
 	);
 	
-	fetch('/vra/catalog/api/about', {
+	fetch('/vra/catalog/api/items', {
 		headers: window.common.auth.apiHeaders
 	}).then((res)=> {
 		if (res.ok) { return res.json(); }
