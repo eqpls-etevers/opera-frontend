@@ -11,8 +11,8 @@ window.common.init = (mainHandler) => {
 	window.common.term = {};
 
 	// tenant configurations //////////////////////////
-	window.common.env.tenant = "eqpls";
-	window.common.env.endpoint = "eqpls.com";
+	window.common.env.tenant = "opera";
+	window.common.env.endpoint = "portal.sddc.lab";
 	window.common.env.isDataService = true;
 	window.common.env.isTermService = true;
 
