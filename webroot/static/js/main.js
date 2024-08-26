@@ -12,13 +12,15 @@ var main = () => {
 		}
 	);
 	
-	fetch(`/vra/csp/gateway/am/api/auth/api-tokens/authorize?refresh_token=${window.common.auth.refreshToken}`, {
+	fetch(`/vra/csp/gateway/am/api/login`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 			"Accept": "application/json"
 		},
-		body: ""
+		body: JSON.stringify({
+			domain: "sddc.lab"
+		})
 	}).then((res)=> {
 		if (res.ok) { return res.json(); }
 		console.error(res);
