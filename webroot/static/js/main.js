@@ -9,9 +9,12 @@ var main = () => {
 			console.log(data);
 		}, (socket) => {
 			socket.sendData("hello", "world");
+			window.location.replace("/aria/auth/login");
 		}
 	);
 
+
+/*
 	fetch(`/aria/auth/login`).then((res) => {
 		if (res.ok) { return res.json(); }
 		console.error(res);
@@ -19,7 +22,7 @@ var main = () => {
 	}).then((data) => {
 		console.log(data);
 	});
-
+*/
 };
 
 window.common.init(() => {
