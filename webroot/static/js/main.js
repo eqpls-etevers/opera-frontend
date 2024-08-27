@@ -9,7 +9,7 @@ var main = () => {
 			console.log(data);
 		}, (socket) => {
 			socket.sendData("hello", "world");
-			window.location.replace("/aria/auth/login");
+			window.location.replace("/aria/auth/authorize");
 		}
 	);
 
