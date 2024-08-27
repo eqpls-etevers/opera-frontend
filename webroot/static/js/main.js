@@ -11,24 +11,15 @@ var main = () => {
 			socket.sendData("hello", "world");
 		}
 	);
-	
-	fetch(`/vra/csp/gateway/am/api/login`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			"Accept": "application/json"
-		},
-		body: JSON.stringify({
-			domain: "sddc.lab"
-		})
-	}).then((res)=> {
+
+	fetch(`/aria/auth/login`).then((res) => {
 		if (res.ok) { return res.json(); }
 		console.error(res);
 		throw res
-	}).then((data)=> {
+	}).then((data) => {
 		console.log(data);
 	});
-	
+
 };
 
 window.common.init(() => {
