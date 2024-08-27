@@ -29,6 +29,21 @@ window.common.init = (mainHandler) => {
 		return map;
 	};
 
+	window.common.util.getCookie = (name) => {
+		var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+		return value ? value[2] : null;
+	};
+
+	window.common.util.setCookie = (name) => {
+		var date = new Date();
+		date.setTime(date.getTime() + exp * 60 * 60 * 1000);
+		document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
+	};
+
+	window.common.util.delCookie = (name) => {
+		document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
+	};
+
 	// window.common.auth /////////////////////////////
 	window.common.auth.url = `${window.common.env.url}/auth`;
 
@@ -126,7 +141,7 @@ window.common.init = (mainHandler) => {
 
 	window.common.auth.checkUserInfo = (resultHandler, errorHandler) => {
 		fetch(`/auth/realms/${window.common.auth.getOrg()}/protocol/openid-connect/userinfo`, {
-			headers: window.common.auth.apiHeaders
+			headers: window.common.auth.headers
 		}).then((res) => {
 			if (res.ok) { return res.json(); }
 			if (errorHandler) { errorHandler(); }
@@ -139,15 +154,28 @@ window.common.init = (mainHandler) => {
 	};
 
 	window.common.auth.postLogin = (resultHandler, errorHandler) => {
-		window.common.auth.accessToken = window.common.auth.keycloak.token;
-		window.common.auth.refreshToken = window.common.auth.keycloak.refreshToken;
-		window.common.auth.idToken = window.common.auth.keycloak.idToken;
-		window.common.auth.apiHeaders = {
-			"Content-Type": "application/json; charset=utf-8",
-			"Accept": "application/json; charset=utf-8",
-			"Authorization": `Bearer ${window.common.auth.accessToken}`
-		};
-		window.common.auth.checkUserInfo(resultHandler, errorHandler);
+		let aaAccessToken = window.common.util.getCookie("AA_ACCESS_TOKEN");
+		if (aaAccessToken) {
+			window.common.aa = {
+				accessToken: aaAccessToken,
+				headers: {
+					"Authorization": `Bearer ${aaAccessToken}`,
+					"Content-Type": "application/json",
+					"Accept": "application/json"
+				}
+			};
+			window.common.auth.accessToken = window.common.auth.keycloak.token;
+			window.common.auth.refreshToken = window.common.auth.keycloak.refreshToken;
+			window.common.auth.idToken = window.common.auth.keycloak.idToken;
+			window.common.auth.headers = {
+				"Content-Type": "application/json; charset=utf-8",
+				"Accept": "application/json; charset=utf-8",
+				"Authorization": `Bearer ${window.common.auth.accessToken}`
+			};
+			window.common.auth.checkUserInfo(resultHandler, errorHandler);
+		} else {
+			window.location.replace("/aria/auth/login");
+		}
 
 		/* // DataService
 		window.common.auth.checkUserInfo(() => {
@@ -197,7 +225,7 @@ window.common.init = (mainHandler) => {
 	// window.common.rest /////////////////////////////
 	window.common.rest.get = (url, resultHandler, errorHandler) => {
 		fetch(url, {
-			headers: window.common.auth.apiHeaders
+			headers: window.common.auth.headers
 		}).then((res) => {
 			if (res.ok) { return res.json(); }
 			if (errorHandler) { errorHandler(res); }
@@ -210,7 +238,7 @@ window.common.init = (mainHandler) => {
 	window.common.rest.post = (url, data, resultHandler, errorHandler) => {
 		fetch(url, {
 			method: "POST",
-			headers: window.common.auth.apiHeaders,
+			headers: window.common.auth.headers,
 			body: JSON.stringify(data)
 		}).then((res) => {
 			if (res.ok) { return res.json(); }
@@ -224,7 +252,7 @@ window.common.init = (mainHandler) => {
 	window.common.rest.put = (url, data, resultHandler, errorHandler) => {
 		fetch(url, {
 			method: "PUT",
-			headers: window.common.auth.apiHeaders,
+			headers: window.common.auth.headers,
 			body: JSON.stringify(data)
 		}).then((res) => {
 			if (res.ok) { return res.json(); }
@@ -238,7 +266,7 @@ window.common.init = (mainHandler) => {
 	window.common.rest.delete = (url, resultHandler, errorHandler) => {
 		fetch(url, {
 			method: "DELETE",
-			headers: window.common.auth.apiHeaders
+			headers: window.common.auth.headers
 		}).then((res) => {
 			if (res.ok) { return res.json(); }
 			if (errorHandler) { errorHandler(res); }
