@@ -9,20 +9,19 @@ var main = () => {
 			console.log(data);
 		}, (socket) => {
 			socket.sendData("hello", "world");
-			window.location.replace("/aria/auth/authorize");
 		}
 	);
 
 
-/*
-	fetch(`/aria/auth/login`).then((res) => {
+	fetch(`/aria/auth/authorize`, {
+		headers: window.common.auth.apiHeader
+	}).then((res) => {
 		if (res.ok) { return res.json(); }
 		console.error(res);
 		throw res
 	}).then((data) => {
 		console.log(data);
 	});
-*/
 };
 
 window.common.init(() => {
