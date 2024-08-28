@@ -139,7 +139,11 @@ window.opera.login = (mainHandler) => {
 	window.opera.getRegions = () => {
 		result = []
 		window.opera.aa.hostnames.forEach((hostname) => {
-			result.push(Object.assign(new Region(), { hostname: hostname }));
+			result.push(Object.assign(new Region(), {
+				hostname: hostname,
+				name: window.opera.aa[hostname].name,
+				status: window.opera.aa[hostname].status
+			}));
 		});
 		return result;
 	};
