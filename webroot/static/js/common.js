@@ -163,7 +163,7 @@ window.common.init = (mainHandler) => {
 			"Authorization": `Bearer ${window.common.auth.accessToken}`
 		};
 		console.log(window.common.auth.accessToken);
-					
+
 		let aaEndpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
 		if (aaEndpointId) {
 			fetch(`/uerp/v1/aria/endpoint/${aaEndpointId}`, {
@@ -176,7 +176,7 @@ window.common.init = (mainHandler) => {
 				window.common.vidm = endpoint.vidm;
 				window.common.aa = {}
 				window.common.aa.hostnames = []
-				endpoint.aa.forEach((aa)=> {
+				endpoint.aa.forEach((aa) => {
 					window.common.aa.hostnames.push(aa.hostname);
 					window.common.aa[aa.hostname] = {
 						accessToken: aa.accessToken,
@@ -229,11 +229,22 @@ window.common.init = (mainHandler) => {
 	};
 
 	window.common.auth.logout = () => {
+		window.common.auth.keycloak.logout({
+			redirectUri: "/"
+		}).then((success) => {
+			console.log(success);
+		}).catch((error) => {
+			console.error(error);
+			window.location.replace("/");
+		});
+		/*
 		if (window.common.auth.idToken) {
+			window.common.auth.keycloak.
 			window.location.replace(`/auth/realms/${window.common.auth.getOrg()}/protocol/openid-connect/logout?id_token_hint=${window.common.auth.idToken}&post_logout_redirect_uri=/`);
 		} else {
 			window.location.replace("/");
 		}
+		*/
 	}
 
 	// window.common.rest /////////////////////////////
