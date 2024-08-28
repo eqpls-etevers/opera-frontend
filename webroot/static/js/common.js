@@ -58,7 +58,86 @@ window.common.init = (mainHandler) => {
 		return window.common.auth.setOrg();
 	};
 
-	/* // DataService
+	//// window.common.auth login library /////////////
+	window.common.auth.loginMiddleWare = null;
+	window.common.auth.logoutMiddleWare = null;
+
+	window.common.auth.login = (redirectUri, resultHandler, errorHandler) => {
+		let keycloak = new Keycloak({
+			url: window.common.auth.url,
+			realm: window.common.auth.getOrg(),
+			clientId: window.common.env.tenant
+		});
+		keycloak.onAuthSuccess = () => {
+			window.common.auth.keycloak = keycloak;
+			window.common.auth.tokenDaemon();
+			window.common.auth.postLogin(resultHandler, errorHandler);
+		};
+		keycloak.onAuthError = () => {
+			if (errorHandler) { errorHandler(); }
+		};
+		keycloak.init({
+			onLoad: 'login-required',
+			redirectUri: redirectUri
+		});
+	};
+
+	window.common.auth.logout = () => {
+		window.common.auth.keycloak.logout({
+			redirectUri: "/"
+		}).then(() => {
+			if (window.common.auth.logoutMiddleWare) {
+				try { window.common.auth.logoutMiddleWare(); }
+				catch (error) { console.error(error); }
+			}
+		}).catch((error) => {
+			console.error(error);
+			window.location.replace("/");
+		});
+	};
+
+	window.common.auth.checkUserInfo = (resultHandler, errorHandler) => {
+		fetch(`/auth/realms/${window.common.auth.getOrg()}/protocol/openid-connect/userinfo`, {
+			headers: window.common.auth.headers
+		}).then((res) => {
+			if (res.ok) { return res.json(); }
+			if (errorHandler) { errorHandler(); }
+			throw res
+		}).then((userInfo) => {
+			window.common.auth.username = userInfo.preferred_username;
+			window.common.auth.userInfo = userInfo;
+			if (resultHandler) { resultHandler(); }
+		});
+	};
+
+	window.common.auth.postLogin = (resultHandler, errorHandler) => {
+		window.common.auth.accessToken = window.common.auth.keycloak.token;
+		window.common.auth.refreshToken = window.common.auth.keycloak.refreshToken;
+		window.common.auth.idToken = window.common.auth.keycloak.idToken;
+		window.common.auth.headers = {
+			"Content-Type": "application/json; charset=utf-8",
+			"Accept": "application/json; charset=utf-8",
+			"Authorization": `Bearer ${window.common.auth.accessToken}`
+		};
+
+		if (window.common.auth.loginMiddleWare) {
+			try { window.common.auth.loginMiddleWare(); }
+			catch (e) { console.error(e); }
+		}
+
+		window.common.auth.checkUserInfo(resultHandler, errorHandler);
+	};
+
+	window.common.auth.tokenDaemon = () => {
+		window.common.auth.keycloak.updateToken(5).then((refreshed) => {
+			if (refreshed) {
+				window.common.auth.postLogin();
+			}
+			setTimeout(window.common.auth.tokenDaemon, 60000);
+		});
+	};
+
+	//// window.common.auth default integrations //////
 	window.common.auth.loginTermService = (resultHandler, errorHandler) => {
 		if (window.common.env.isTermService) {
 			window.common.auth.termToken = localStorage.getItem("authTermToken");
@@ -96,7 +175,6 @@ window.common.init = (mainHandler) => {
 			if (resultHandler) { resultHandler(); }
 		}
 	};
-	*/
 
 	window.common.auth.loginDataService = (resultHandler, errorHandler) => {
 		if (window.common.env.isDataService) {
@@ -137,104 +215,6 @@ window.common.init = (mainHandler) => {
 				});
 			}
 		} else if (resultHandler) { resultHandler(); }
-	};
-
-	window.common.auth.checkUserInfo = (resultHandler, errorHandler) => {
-		fetch(`/auth/realms/${window.common.auth.getOrg()}/protocol/openid-connect/userinfo`, {
-			headers: window.common.auth.headers
-		}).then((res) => {
-			if (res.ok) { return res.json(); }
-			if (errorHandler) { errorHandler(); }
-			throw res
-		}).then((userInfo) => {
-			window.common.auth.username = userInfo.preferred_username;
-			window.common.auth.userInfo = userInfo;
-			if (resultHandler) { resultHandler(); }
-		});
-	};
-
-	window.common.auth.postLogin = (resultHandler, errorHandler) => {
-		window.common.auth.accessToken = window.common.auth.keycloak.token;
-		window.common.auth.refreshToken = window.common.auth.keycloak.refreshToken;
-		window.common.auth.idToken = window.common.auth.keycloak.idToken;
-		window.common.auth.headers = {
-			"Content-Type": "application/json; charset=utf-8",
-			"Accept": "application/json; charset=utf-8",
-			"Authorization": `Bearer ${window.common.auth.accessToken}`
-		};
-		console.log(window.common.auth.accessToken);
-
-		let aaEndpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
-		if (aaEndpointId) {
-			fetch(`/uerp/v1/aria/endpoint/${aaEndpointId}`, {
-				headers: window.common.auth.headers
-			}).then((res) => {
-				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
-				throw res
-			}).then((endpoint) => {
-				window.common.vidm = endpoint.vidm;
-				window.common.aa = {}
-				window.common.aa.hostnames = []
-				endpoint.aa.forEach((aa) => {
-					window.common.aa.hostnames.push(aa.hostname);
-					window.common.aa[aa.hostname] = {
-						accessToken: aa.accessToken,
-						headers: {
-							"Authorization": `Bearer ${aa.accessToken}`
-						}
-					};
-				});
-				window.common.auth.checkUserInfo(resultHandler, errorHandler);
-			});
-		} else {
-			window.location.replace("/aria/auth/login");
-		}
-
-		/* // DataService
-		window.common.auth.checkUserInfo(() => {
-			window.common.auth.loginDataService(resultHandler, errorHandler);
-		}, errorHandler);
-		*/
-	};
-
-	window.common.auth.tokenDaemon = () => {
-		window.common.auth.keycloak.updateToken(5).then((refreshed) => {
-			if (refreshed) {
-				//window.common.auth.dataToken = null; // DataService
-				window.common.auth.postLogin();
-			}
-			setTimeout(window.common.auth.tokenDaemon, 60000);
-		});
-	};
-
-	window.common.auth.login = (redirectUri, resultHandler, errorHandler) => {
-		let keycloak = new Keycloak({
-			url: window.common.auth.url,
-			realm: window.common.auth.getOrg(),
-			clientId: window.common.env.tenant
-		});
-		keycloak.onAuthSuccess = () => {
-			window.common.auth.keycloak = keycloak;
-			window.common.auth.tokenDaemon();
-			window.common.auth.postLogin(resultHandler, errorHandler);
-		};
-		keycloak.onAuthError = () => {
-			if (errorHandler) { errorHandler(); }
-		};
-		keycloak.init({
-			onLoad: 'login-required',
-			redirectUri: redirectUri
-		});
-	};
-
-	window.common.auth.logout = () => {
-		window.common.auth.keycloak.logout({
-			redirectUri: "/"
-		}).catch((error) => {
-			console.error(error);
-			window.location.replace("/");
-		});
 	};
 
 	// window.common.rest /////////////////////////////
