@@ -34,9 +34,10 @@ window.common.init = (mainHandler) => {
 		return value ? value[2] : null;
 	};
 
-	window.common.util.setCookie = (name) => {
+	window.common.util.setCookie = (name, value, expire) => {
+		if (!expire) { expire = 3600; }
 		var date = new Date();
-		date.setTime(date.getTime() + exp * 60 * 60 * 1000);
+		date.setTime(date.getTime() + expire * 1000);
 		document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
 	};
 
@@ -92,10 +93,11 @@ window.common.init = (mainHandler) => {
 		window.common.auth.accessToken = window.common.auth.keycloak.token;
 		window.common.auth.refreshToken = window.common.auth.keycloak.refreshToken;
 		window.common.auth.idToken = window.common.auth.keycloak.idToken;
+		window.common.auth.bearerToken = `Bearer ${window.common.auth.accessToken}`
 		window.common.auth.headers = {
+			"Authorization": window.common.auth.bearerToken,
 			"Content-Type": "application/json; charset=utf-8",
-			"Accept": "application/json; charset=utf-8",
-			"Authorization": `Bearer ${window.common.auth.accessToken}`
+			"Accept": "application/json; charset=utf-8"
 		};
 
 		try {

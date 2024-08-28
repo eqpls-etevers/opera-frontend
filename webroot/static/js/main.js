@@ -1,6 +1,6 @@
 // javascript here
 
-var main = () => {
+function main() {
 	document.getElementById("opera-username").innerText = window.common.auth.username;
 	document.getElementById("opera-userinfo").innerText = JSON.stringify(window.common.auth.userInfo);
 	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
@@ -13,48 +13,22 @@ var main = () => {
 		dom.innerText = `${hostname}: ${aa.accessToken}`;
 		aaDom.appendChild(dom);
 	});
-};
 
-var loginAria = (loginProcess) => {
-	let aaEndpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
-	if (aaEndpointId) {
-		fetch(`/uerp/v1/aria/endpoint/${aaEndpointId}`, {
-			headers: window.common.auth.headers
-		}).then((res) => {
-			if (res.ok) { return res.json(); }
-			throw res
-		}).then((endpoint) => {
-			window.common.vidm = endpoint.vidm;
-			window.common.aa = {}
-			window.common.aa.hostnames = []
-			endpoint.aa.forEach((aa) => {
-				window.common.aa.hostnames.push(aa.hostname);
-				window.common.aa[aa.hostname] = {
-					accessToken: aa.accessToken,
-					headers: {
-						"Authorization": `Bearer ${aa.accessToken}`
-					}
-				};
+	window.opera.getRegions((regions) => {
+		regions.forEach((region) => {
+			region.print();
+			region.getProject((projects) => {
+				projects.forEach((project) => {
+					project.print();
+					project.getCatalogs((catalogs) => {
+						catalogs.forEach((catalog) => {
+							catalog.print();
+						});
+					});
+				});
 			});
-			loginProcess();
 		});
-	} else {
-		window.location.replace("/aria/auth/login");
-	}
+	});
 };
 
-var logoutAria = () => {
-	window.common.util.delCookie("ARIA_ENDPOINT_ID");
-};
-
-window.common.init(() => {
-	window.common.auth.loginMiddleWare = loginAria;
-	window.common.auth.logoutMiddleWare = logoutAria;
-	window.common.auth.login(
-		"/", // redirect url
-		main, // login success
-		() => { // login failed
-			console.error("login error");
-		}
-	);
-});
+window.opera.login(main);
