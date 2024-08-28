@@ -154,25 +154,39 @@ window.common.init = (mainHandler) => {
 	};
 
 	window.common.auth.postLogin = (resultHandler, errorHandler) => {
-		let aaAccessToken = window.common.util.getCookie("AA_ACCESS_TOKEN");
-		if (aaAccessToken) {
-			window.common.aa = {
-				accessToken: aaAccessToken,
-				headers: {
-					"Authorization": `Bearer ${aaAccessToken}`,
-					"Content-Type": "application/json",
-					"Accept": "application/json"
-				}
-			};
-			window.common.auth.accessToken = window.common.auth.keycloak.token;
-			window.common.auth.refreshToken = window.common.auth.keycloak.refreshToken;
-			window.common.auth.idToken = window.common.auth.keycloak.idToken;
-			window.common.auth.headers = {
-				"Content-Type": "application/json; charset=utf-8",
-				"Accept": "application/json; charset=utf-8",
-				"Authorization": `Bearer ${window.common.auth.accessToken}`
-			};
-			window.common.auth.checkUserInfo(resultHandler, errorHandler);
+		window.common.auth.accessToken = window.common.auth.keycloak.token;
+		window.common.auth.refreshToken = window.common.auth.keycloak.refreshToken;
+		window.common.auth.idToken = window.common.auth.keycloak.idToken;
+		window.common.auth.headers = {
+			"Content-Type": "application/json; charset=utf-8",
+			"Accept": "application/json; charset=utf-8",
+			"Authorization": `Bearer ${window.common.auth.accessToken}`
+		};
+					
+		let aaEndpointId = window.common.util.getCookie("AA_ENDPOINT_ID");
+		if (aaEndpointId) {
+			fetch(`/uerp/v1/aria/endpoint/${aaEndpointId}`, {
+				headers: window.common.auth.headers
+			}).then((res) => {
+				if (res.ok) { return res.json(); }
+				if (errorHandler) { errorHandler(res); }
+				throw res
+			}).then((endpoint) => {
+				window.common.vidm = endpoint.vidm;
+				window.common.aa = {}
+				window.common.aa.hostnames = []
+				endpoint.aa.forEach((aa)=> {
+					window.common.aa.hostnames.push(aa.hostname);
+					window.common.aa[aa.hostname] = {
+						accessToken: aa.accessToken,
+						refreshToken: aa.refreshToken,
+						headers: {
+							"Authorization": `Bearer ${aa.accessToken}`
+						}
+					};
+				});
+				window.common.auth.checkUserInfo(resultHandler, errorHandler);
+			});
 		} else {
 			window.location.replace("/aria/auth/login");
 		}
