@@ -231,21 +231,11 @@ window.common.init = (mainHandler) => {
 	window.common.auth.logout = () => {
 		window.common.auth.keycloak.logout({
 			redirectUri: "/"
-		}).then((success) => {
-			console.log(success);
 		}).catch((error) => {
 			console.error(error);
 			window.location.replace("/");
 		});
-		/*
-		if (window.common.auth.idToken) {
-			window.common.auth.keycloak.
-			window.location.replace(`/auth/realms/${window.common.auth.getOrg()}/protocol/openid-connect/logout?id_token_hint=${window.common.auth.idToken}&post_logout_redirect_uri=/`);
-		} else {
-			window.location.replace("/");
-		}
-		*/
-	}
+	};
 
 	// window.common.rest /////////////////////////////
 	window.common.rest.get = (url, resultHandler, errorHandler) => {
