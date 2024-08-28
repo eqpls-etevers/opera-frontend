@@ -4,11 +4,11 @@ function main() {
 	document.getElementById("opera-username").innerText = window.common.auth.username;
 	document.getElementById("opera-userinfo").innerText = JSON.stringify(window.common.auth.userInfo);
 	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
-	document.getElementById("vidm-access-token").innerText = window.common.vidm.accessToken;
+	document.getElementById("vidm-access-token").innerText = window.opera.vidm.accessToken;
 
 	let aaDom = document.getElementById("aa-access-tokens");
-	window.common.aa.hostnames.forEach((hostname) => {
-		let aa = window.common.aa[hostname];
+	window.opera.aa.hostnames.forEach((hostname) => {
+		let aa = window.opera.aa[hostname];
 		let dom = document.createElement('p');
 		dom.innerText = `${hostname}: ${aa.accessToken}`;
 		aaDom.appendChild(dom);
