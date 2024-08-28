@@ -13,14 +13,13 @@ var main = () => {
 	});
 };
 
-var loginAria = () => {
+var loginAria = (loginProcess) => {
 	let aaEndpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
 	if (aaEndpointId) {
 		fetch(`/uerp/v1/aria/endpoint/${aaEndpointId}`, {
 			headers: window.common.auth.headers
 		}).then((res) => {
 			if (res.ok) { return res.json(); }
-			if (errorHandler) { errorHandler(res); }
 			throw res
 		}).then((endpoint) => {
 			window.common.vidm = endpoint.vidm;
@@ -35,6 +34,7 @@ var loginAria = () => {
 					}
 				};
 			});
+			loginProcess();
 		});
 	} else {
 		window.location.replace("/aria/auth/login");

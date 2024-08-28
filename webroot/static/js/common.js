@@ -59,8 +59,14 @@ window.common.init = (mainHandler) => {
 	};
 
 	//// window.common.auth login library /////////////
-	window.common.auth.loginMiddleWare = null;
-	window.common.auth.logoutMiddleWare = null;
+	window.common.auth.loginMiddleWare = (loginProcess) => {
+		console.log("bypass login middleware");
+		loginProcess();
+	};
+
+	window.common.auth.logoutMiddleWare = () => {
+		console.log("bypass logout middleware");
+	};
 
 	window.common.auth.login = (redirectUri, resultHandler, errorHandler) => {
 		let keycloak = new Keycloak({
@@ -82,13 +88,34 @@ window.common.init = (mainHandler) => {
 		});
 	};
 
+	window.common.auth.postLogin = (resultHandler, errorHandler) => {
+		window.common.auth.accessToken = window.common.auth.keycloak.token;
+		window.common.auth.refreshToken = window.common.auth.keycloak.refreshToken;
+		window.common.auth.idToken = window.common.auth.keycloak.idToken;
+		window.common.auth.headers = {
+			"Content-Type": "application/json; charset=utf-8",
+			"Accept": "application/json; charset=utf-8",
+			"Authorization": `Bearer ${window.common.auth.accessToken}`
+		};
+
+		try {
+			window.common.auth.loginMiddleWare(() => {
+				window.common.auth.checkUserInfo(resultHandler, errorHandler);
+			});
+		} catch (error) {
+			if (errorHandler) { errorHandler(error); }
+		}
+	};
+
 	window.common.auth.logout = () => {
 		window.common.auth.keycloak.logout({
 			redirectUri: "/"
 		}).then(() => {
-			if (window.common.auth.logoutMiddleWare) {
-				try { window.common.auth.logoutMiddleWare(); }
-				catch (error) { console.error(error); }
+			try {
+				window.common.auth.logoutMiddleWare();
+			} catch (error) {
+				console.error(error);
+				window.location.replace("/");
 			}
 		}).catch((error) => {
 			console.error(error);
@@ -108,24 +135,6 @@ window.common.init = (mainHandler) => {
 			window.common.auth.userInfo = userInfo;
 			if (resultHandler) { resultHandler(); }
 		});
-	};
-
-	window.common.auth.postLogin = (resultHandler, errorHandler) => {
-		window.common.auth.accessToken = window.common.auth.keycloak.token;
-		window.common.auth.refreshToken = window.common.auth.keycloak.refreshToken;
-		window.common.auth.idToken = window.common.auth.keycloak.idToken;
-		window.common.auth.headers = {
-			"Content-Type": "application/json; charset=utf-8",
-			"Accept": "application/json; charset=utf-8",
-			"Authorization": `Bearer ${window.common.auth.accessToken}`
-		};
-
-		if (window.common.auth.loginMiddleWare) {
-			try { window.common.auth.loginMiddleWare(); }
-			catch (e) { console.error(e); }
-		}
-
-		window.common.auth.checkUserInfo(resultHandler, errorHandler);
 	};
 
 	window.common.auth.tokenDaemon = () => {
