@@ -17,7 +17,7 @@ function main() {
 	let regions = window.opera.getRegions();
 	regions.forEach((region) => {
 		region.print();
-		region.getProject((projects) => {
+		region.getProjects((projects) => {
 			projects.forEach((project) => {
 				project.print();
 				project.getCatalogs((catalogs) => {
