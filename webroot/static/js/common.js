@@ -162,6 +162,7 @@ window.common.init = (mainHandler) => {
 			"Accept": "application/json; charset=utf-8",
 			"Authorization": `Bearer ${window.common.auth.accessToken}`
 		};
+		console.log(window.common.auth.accessToken);
 					
 		let aaEndpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
 		if (aaEndpointId) {
