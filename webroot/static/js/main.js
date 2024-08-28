@@ -1,6 +1,8 @@
 // javascript here
 
 var main = () => {
+	document.getElementById("opera-username").innerText = window.common.auth.username;
+	document.getElementById("opera-userinfo").innerText = window.common.auth.userInfo;
 	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
 	document.getElementById("vidm-access-token").innerText = window.common.vidm.accessToken;
 
