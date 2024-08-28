@@ -179,7 +179,6 @@ window.common.init = (mainHandler) => {
 					window.common.aa.hostnames.push(aa.hostname);
 					window.common.aa[aa.hostname] = {
 						accessToken: aa.accessToken,
-						refreshToken: aa.refreshToken,
 						headers: {
 							"Authorization": `Bearer ${aa.accessToken}`
 						}
