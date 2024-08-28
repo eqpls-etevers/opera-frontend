@@ -163,7 +163,7 @@ window.common.init = (mainHandler) => {
 			"Authorization": `Bearer ${window.common.auth.accessToken}`
 		};
 					
-		let aaEndpointId = window.common.util.getCookie("AA_ENDPOINT_ID");
+		let aaEndpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
 		if (aaEndpointId) {
 			fetch(`/uerp/v1/aria/endpoint/${aaEndpointId}`, {
 				headers: window.common.auth.headers
