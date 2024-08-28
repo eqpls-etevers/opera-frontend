@@ -49,7 +49,7 @@ window.opera.login = (mainHandler) => {
 					"Accept": "application/json; charset=utf-8"
 				}
 			}).then((res) => {
-				if (res.ok) { res.json(); }
+				if (res.ok) { return res.json(); }
 				if (errorHandler) { errorHandler(res); }
 				throw res
 			}).then((data) => {
@@ -69,7 +69,7 @@ window.opera.login = (mainHandler) => {
 				},
 				body: JSON.stringify(data)
 			}).then((res) => {
-				if (res.ok) { res.json(); }
+				if (res.ok) { return res.json(); }
 				if (errorHandler) { errorHandler(res); }
 				throw res
 			}).then((data) => {
@@ -89,7 +89,27 @@ window.opera.login = (mainHandler) => {
 				},
 				body: JSON.stringify(data)
 			}).then((res) => {
-				if (res.ok) { res.json(); }
+				if (res.ok) { return res.json(); }
+				if (errorHandler) { errorHandler(res); }
+				throw res
+			}).then((data) => {
+				if (resultHandler) { resultHandler(data); }
+			});
+		};
+
+		this.patch = (url, data, resultHandler, errorHandler) => {
+			fetch(`/aria/aa${url}`, {
+				method: "PATCH",
+				headers: {
+					"Authorization": window.common.auth.bearerToken,
+					"AA-Auth": window.opera.aa[this.hostname].accessToken,
+					"AA-Host": this.hostname,
+					"Content-Type": "application/json; charset=utf-8",
+					"Accept": "application/json; charset=utf-8"
+				},
+				body: JSON.stringify(data)
+			}).then((res) => {
+				if (res.ok) { return res.json(); }
 				if (errorHandler) { errorHandler(res); }
 				throw res
 			}).then((data) => {
@@ -107,7 +127,7 @@ window.opera.login = (mainHandler) => {
 					"Accept": "application/json; charset=utf-8"
 				}
 			}).then((res) => {
-				if (res.ok) { res.json(); }
+				if (res.ok) { return res.json(); }
 				if (errorHandler) { errorHandler(res); }
 				throw res
 			}).then((data) => {
