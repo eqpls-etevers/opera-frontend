@@ -3,44 +3,77 @@
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 
+	function Deployment() {
+		this.print = () => { console.log(this); }
+	};
+
 	function Catalog() {
-		this.print = () => { console.log('Catalog: ', this); }
+		this.print = () => { console.log(this); }
 	};
 
 	function Project() {
-		this.getCatalogs = (resultHandler, errorHandler) => {
-			this.region.get('/catalog/api/items', (data) => {
-				if (resultHandler) {
+		this.getDeployments = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/deployments?projects=${this.id}`, (data) => {
 					result = [];
-					data.content.forEach((catalog) => {
-						catalog.region = this.region;
-						result.push(Object.assign(new Catalog(), catalog));
+					data.content.forEach((content) => {
+						content.region = this;
+						result.push(Object.assign(new Deployment(), content));
 					});
 					resultHandler(result);
-				}
-			}, errorHandler);
+				}, errorHandler);
+			}
 		};
 
-		this.print = () => { console.log('Project: ', this); }
+		this.getCatalogs = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/catalog/api/items?projects=${this.id}`, (data) => {
+					result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Catalog(), content));
+					});
+					resultHandler(result);
+				}, errorHandler);
+			}
+		};
+
+		this.print = () => { console.log(this); }
 	};
 
 	function Region() {
-		this.getProjects = (resultHandler, errorHandler) => {
-			this.get('/iaas/api/projects', (data) => {
-				if (resultHandler) {
+
+		this.getDeployments = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.rest.get('/deployment/api/deployments', (data) => {
 					result = [];
-					data.content.forEach((project) => {
-						project.region = this;
-						result.push(Object.assign(new Project(), project));
+					data.content.forEach((content) => {
+						content.region = this;
+						result.push(Object.assign(new Deployment(), content));
 					});
 					resultHandler(result);
-				}
-			}, errorHandler);
+				}, errorHandler);
+			}
 		};
 
-		this.print = () => { console.log('Region: ', this); }
+		this.getProjects = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.rest.get('/deployment/api/deployments', (data) => {
+					result = [];
+					data.content.forEach((content) => {
+						content.region = this;
+						result.push(Object.assign(new Project(), content));
+					});
+					resultHandler(result);
+				}, errorHandler);
+			}
+		};
 
-		this.get = (url, resultHandler, errorHandler) => {
+		this.print = () => { console.log(this); }
+
+		this.rest = {};
+
+		this.rest.get = (url, resultHandler, errorHandler) => {
 			fetch(`/aria/aa/${url}`, {
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
@@ -57,7 +90,7 @@ window.opera.login = (mainHandler) => {
 			});
 		};
 
-		this.post = (url, data, resultHandler, errorHandler) => {
+		this.rest.post = (url, data, resultHandler, errorHandler) => {
 			fetch(`/aria/aa${url}`, {
 				method: "POST",
 				headers: {
@@ -77,7 +110,7 @@ window.opera.login = (mainHandler) => {
 			});
 		};
 
-		this.put = (url, data, resultHandler, errorHandler) => {
+		this.rest.put = (url, data, resultHandler, errorHandler) => {
 			fetch(`/aria/aa${url}`, {
 				method: "PUT",
 				headers: {
@@ -97,7 +130,7 @@ window.opera.login = (mainHandler) => {
 			});
 		};
 
-		this.patch = (url, data, resultHandler, errorHandler) => {
+		this.rest.patch = (url, data, resultHandler, errorHandler) => {
 			fetch(`/aria/aa${url}`, {
 				method: "PATCH",
 				headers: {
@@ -117,7 +150,7 @@ window.opera.login = (mainHandler) => {
 			});
 		};
 
-		this.delete = (url, resultHandler, errorHandler) => {
+		this.rest.delete = (url, resultHandler, errorHandler) => {
 			fetch(`/aria/aa${url}`, {
 				method: "DELETE",
 				headers: {
