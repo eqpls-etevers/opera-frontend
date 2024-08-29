@@ -6,7 +6,7 @@ function main() {
 	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
 	document.getElementById("vidm-access-token").innerText = window.opera.vidm.accessToken;
 
-	let rgionsDom = document.getElementById("regions-access-tokens");
+	let regionsDom = document.getElementById("regions-access-tokens");
 	window.opera.regions.hostnames.forEach((hostname) => {
 		let region = window.opera.regions[hostname];
 		let dom = document.createElement('p');
