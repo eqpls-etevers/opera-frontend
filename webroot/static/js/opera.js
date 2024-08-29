@@ -5,24 +5,24 @@ window.opera.login = (mainHandler) => {
 
 	function setArrayFunctions(arr) {
 		arr.readById = (id) => {
-			this.forEach((content) => { if (id == content.id) { return content; } });
+			arr.forEach((content) => { if (id == content.id) { return content; } });
 			return None
 		};
 		arr.searchByName = (name) => {
 			let result = [];
-			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
+			arr.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
 			return setArrayFunctions(result);
 		};
 		arr.searchByField = (field, value) => {
 			let result = [];
-			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
+			arr.forEach((content) => { if (value == content[field]) { result.push(content); } });
 			return setArrayFunctions(result);
 		}
 		arr.sortAscBy = (field) => {
-			this.sort(function(a, b) { return a[field] - b[field]; });
+			arr.sort(function(a, b) { return a[field] - b[field]; });
 		};
 		arr.sortDescBy = (field) => {
-			this.sort(function(a, b) { return b[field] - a[field]; });
+			arr.sort(function(a, b) { return b[field] - a[field]; });
 		};
 		return arr;
 	}
