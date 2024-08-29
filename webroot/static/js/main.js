@@ -21,13 +21,13 @@ function main() {
 			projects.forEach((project) => {
 				project.print();
 				project.getCatalogs((catalogs) => {
-					catalogs = catalogs.sortDescBy('name');
+					catalogs.sortDescBy('name');
 					catalogs.forEach((catalog) => {
 						catalog.print();
 					});
 				});
 				project.getDeployments((deployments) => {
-					deployments = deployments.sortDescBy('name');
+					deployments.sortDescBy('name');
 					deployments.forEach((deployment) => {
 						deployment.print();
 					})

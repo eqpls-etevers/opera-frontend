@@ -19,10 +19,30 @@ window.opera.login = (mainHandler) => {
 			return setArrayFunctions(result);
 		}
 		arr.sortAscBy = (field) => {
-			return setArrayFunctions(arr.sort(function(a, b) { return a[field] - b[field]; }));
+			if (arr.length > 0) {
+				let val = arr[0][field]
+				if (typeof val == "string") {
+					arr.sort(function(a, b) { return a[field] > b[field]; })
+				} else if (typeof val == "number") {
+					arr.sort(function(a, b) { return a[field] - b[field]; })
+				} else {
+					console.error("could not sort");
+				}
+			}
+			return arr;
 		};
 		arr.sortDescBy = (field) => {
-			return setArrayFunctions(arr.sort(function(a, b) { return b[field] - a[field]; }));
+			if (arr.length > 0) {
+				let val = arr[0][field]
+				if (typeof val == "string") {
+					arr.sort(function(a, b) { return b[field] > a[field]; })
+				} else if (typeof val == "number") {
+					arr.sort(function(a, b) { return b[field] - a[field]; })
+				} else {
+					console.error("could not sort");
+				}
+			}
+			return arr
 		};
 		return arr;
 	}
