@@ -42,7 +42,6 @@ window.opera.login = (mainHandler) => {
 	};
 
 	function Region() {
-
 		this.getDeployments = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/deployment/api/deployments', (data) => {
@@ -50,6 +49,19 @@ window.opera.login = (mainHandler) => {
 					data.content.forEach((content) => {
 						content.region = this;
 						result.push(Object.assign(new Deployment(), content));
+					});
+					resultHandler(result);
+				}, errorHandler);
+			}
+		};
+
+		this.getCatalogs = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get('/catalog/api/items', (data) => {
+					result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Catalog(), content));
 					});
 					resultHandler(result);
 				}, errorHandler);
