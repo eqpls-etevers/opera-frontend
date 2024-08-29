@@ -22,9 +22,17 @@ window.opera.login = (mainHandler) => {
 			if (arr.length > 0) {
 				let val = arr[0][field]
 				if (typeof val == "string") {
-					arr.sort(function(a, b) { return a[field] > b[field]; })
+					console.log(`sort asc by ${field} string type`)
+					arr.sort(function(a, b) {
+						console.log(a[field], ">", b[field]);
+						return a[field] > b[field];
+					});
 				} else if (typeof val == "number") {
-					arr.sort(function(a, b) { return a[field] - b[field]; })
+					console.log(`sort asc by ${field} number type`)
+					arr.sort(function(a, b) {
+						console.log(a[field], "-", b[field]);
+						return a[field] - b[field];
+					});
 				} else {
 					console.error("could not sort");
 				}
@@ -35,9 +43,17 @@ window.opera.login = (mainHandler) => {
 			if (arr.length > 0) {
 				let val = arr[0][field]
 				if (typeof val == "string") {
-					arr.sort(function(a, b) { return b[field] > a[field]; })
+					console.log(`sort desc by ${field} string type`)
+					arr.sort(function(a, b) {
+						console.log(b[field], ">", a[field]);
+						return b[field] > a[field];
+					});
 				} else if (typeof val == "number") {
-					arr.sort(function(a, b) { return b[field] - a[field]; })
+					console.log(`sort desc by ${field} number type`)
+					arr.sort(function(a, b) {
+						console.log(b[field], "-", a[field]);
+						return b[field] - a[field];
+					});
 				} else {
 					console.error("could not sort");
 				}
