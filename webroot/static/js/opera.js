@@ -3,70 +3,48 @@
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 
-	function Deployment() {
-		this.print = () => { console.log(this); }
-	};
-
-	function Deployments() {
-		this.readById = (id) => {
+	function setArrayFunctions(arr) {
+		arr.readById = (id) => {
 			this.forEach((content) => { if (id == content.id) { return content; } });
 			return None
 		};
-		this.searchByName = (name) => {
-			let result = new Array();
+		arr.searchByName = (name) => {
+			let result = [];
 			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
-			return Object.assign(new Projects(), result)
+			return setArrayFunctions(result);
 		};
-		this.searchByField = (field, value) => {
-			let result = new Array();
+		arr.searchByField = (field, value) => {
+			let result = [];
 			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
-			return Object.assign(new Projects(), result)
+			return setArrayFunctions(result);
 		}
-		this.ascBy = (field) => {
+		arr.ascBy = (field) => {
 			this.sort(function(a, b) { return a[field] - b[field]; });
 		};
-		this.descBy = (field) => {
+		arr.descBy = (field) => {
 			this.sort(function(a, b) { return b[field] - a[field]; });
 		};
+		return arr;
+	}
+
+	function Deployment() {
+		this.print = () => { console.log(this); }
 	};
 
 	function Catalog() {
 		this.print = () => { console.log(this); }
 	};
 
-	function Catalogs() {
-		this.readById = (id) => {
-			this.forEach((content) => { if (id == content.id) { return content; } });
-			return None
-		};
-		this.searchByName = (name) => {
-			let result = new Array();
-			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
-			return Object.assign(new Projects(), result)
-		};
-		this.searchByField = (field, value) => {
-			let result = new Array();
-			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
-			return Object.assign(new Projects(), result)
-		}
-		this.ascBy = (field) => {
-			this.sort(function(a, b) { return a[field] - b[field]; });
-		};
-		this.descBy = (field) => {
-			this.sort(function(a, b) { return b[field] - a[field]; });
-		};
-	};
-
 	function Project() {
 		this.getDeployments = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/deployment/api/deployments?projects=${this.id}`, (data) => {
-					let result = new Array();
+					let result = [];
 					data.content.forEach((content) => {
 						content.region = this;
 						result.push(Object.assign(new Deployment(), content));
 					});
-					resultHandler(Object.assign(new Deployments(), result));
+					resultHandler(setArrayFunctions(result));
 				}, errorHandler);
 			}
 		};
@@ -74,12 +52,12 @@ window.opera.login = (mainHandler) => {
 		this.getCatalogs = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/catalog/api/items?projects=${this.id}`, (data) => {
-					let result = new Array();
+					let result = [];
 					data.content.forEach((content) => {
 						content.region = this.region;
 						result.push(Object.assign(new Catalog(), content));
 					});
-					resultHandler(Object.assign(new Catalogs(), result));
+					resultHandler(setArrayFunctions(result));
 				}, errorHandler);
 			}
 		};
@@ -87,39 +65,16 @@ window.opera.login = (mainHandler) => {
 		this.print = () => { console.log(this); }
 	};
 
-	function Projects() {
-		this.readById = (id) => {
-			this.forEach((content) => { if (id == content.id) { return content; } });
-			return None
-		};
-		this.searchByName = (name) => {
-			let result = new Array();
-			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
-			return Object.assign(new Projects(), result)
-		};
-		this.searchByField = (field, value) => {
-			let result = new Array();
-			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
-			return Object.assign(new Projects(), result)
-		}
-		this.ascBy = (field) => {
-			this.sort(function(a, b) { return a[field] - b[field]; });
-		};
-		this.descBy = (field) => {
-			this.sort(function(a, b) { return b[field] - a[field]; });
-		};
-	};
-
 	function Region() {
 		this.getDeployments = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/deployment/api/deployments', (data) => {
-					let result = new Array();
+					let result = [];
 					data.content.forEach((content) => {
 						content.region = this;
 						result.push(Object.assign(new Deployment(), content));
 					});
-					resultHandler(Object.assign(new Deployments(), result));
+					resultHandler(setArrayFunctions(result));
 				}, errorHandler);
 			}
 		};
@@ -127,12 +82,12 @@ window.opera.login = (mainHandler) => {
 		this.getCatalogs = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get('/catalog/api/items', (data) => {
-					let result = new Array();
+					let result = [];
 					data.content.forEach((content) => {
 						content.region = this.region;
 						result.push(Object.assign(new Catalog(), content));
 					});
-					resultHandler(Object.assign(new Catalogs(), result));
+					resultHandler(setArrayFunctions(result));
 				}, errorHandler);
 			}
 		};
@@ -140,12 +95,12 @@ window.opera.login = (mainHandler) => {
 		this.getProjects = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/deployment/api/deployments', (data) => {
-					let result = new Array();
+					let result = [];
 					data.content.forEach((content) => {
 						content.region = this;
 						result.push(Object.assign(new Project(), content));
 					});
-					resultHandler(Object.assign(new Projects(), result));
+					resultHandler(setArrayFunctions(result));
 				}, errorHandler);
 			}
 		};
@@ -251,7 +206,7 @@ window.opera.login = (mainHandler) => {
 	};
 
 	window.opera.getRegions = () => {
-		let result = new Array();
+		let result = [];
 		window.opera.regions.hostnames.forEach((hostname) => {
 			result.push(Object.assign(new Region(), window.opera.regions[hostname]));
 		});
