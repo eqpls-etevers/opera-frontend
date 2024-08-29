@@ -94,7 +94,7 @@ window.opera.login = (mainHandler) => {
 
 		this.getProjects = (resultHandler, errorHandler) => {
 			if (resultHandler) {
-				this.rest.get('/deployment/api/deployments', (data) => {
+				this.rest.get('/iaas/api/projects', (data) => {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this;
