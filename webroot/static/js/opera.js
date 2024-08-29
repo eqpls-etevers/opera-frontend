@@ -24,13 +24,14 @@ window.opera.login = (mainHandler) => {
 				if (typeof val == "string") {
 					console.log(`sort asc by ${field} string type`)
 					arr.sort(function(a, b) {
-						console.log(a[field], ">", b[field]);
-						return a[field] > b[field];
+						let aval = a[field];
+						let bval = b[field];
+						return aval < bval ? -1 : aval > bval ? 1 : 0;
+						//return a[field] > b[field];
 					});
 				} else if (typeof val == "number") {
 					console.log(`sort asc by ${field} number type`)
 					arr.sort(function(a, b) {
-						console.log(a[field], "-", b[field]);
 						return a[field] - b[field];
 					});
 				} else {
@@ -45,13 +46,14 @@ window.opera.login = (mainHandler) => {
 				if (typeof val == "string") {
 					console.log(`sort desc by ${field} string type`)
 					arr.sort(function(a, b) {
-						console.log(b[field], ">", a[field]);
-						return b[field] > a[field];
+						let aval = a[field];
+						let bval = b[field];
+						return aval > bval ? -1 : aval < bval ? 1 : 0;
+						//return b[field] > a[field];
 					});
 				} else if (typeof val == "number") {
 					console.log(`sort desc by ${field} number type`)
 					arr.sort(function(a, b) {
-						console.log(b[field], "-", a[field]);
 						return b[field] - a[field];
 					});
 				} else {
