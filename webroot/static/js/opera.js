@@ -7,8 +7,54 @@ window.opera.login = (mainHandler) => {
 		this.print = () => { console.log(this); }
 	};
 
+	function Deployments() {
+		this.readById = (id) => {
+			this.forEach((content) => { if (id == content.id) { return content; } });
+			return None
+		};
+		this.searchByName = (name) => {
+			let result = [];
+			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
+			return Object.assign(new Projects(), result)
+		};
+		this.searchByField = (field, value) => {
+			let result = [];
+			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
+			return Object.assign(new Projects(), result)
+		}
+		this.ascBy = (field) => {
+			this.sort(function(a, b) { return a[field] - b[field]; });
+		};
+		this.descBy = (field) => {
+			this.sort(function(a, b) { return b[field] - a[field]; });
+		};
+	};
+
 	function Catalog() {
 		this.print = () => { console.log(this); }
+	};
+
+	function Catalogs() {
+		this.readById = (id) => {
+			this.forEach((content) => { if (id == content.id) { return content; } });
+			return None
+		};
+		this.searchByName = (name) => {
+			let result = [];
+			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
+			return Object.assign(new Projects(), result)
+		};
+		this.searchByField = (field, value) => {
+			let result = [];
+			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
+			return Object.assign(new Projects(), result)
+		}
+		this.ascBy = (field) => {
+			this.sort(function(a, b) { return a[field] - b[field]; });
+		};
+		this.descBy = (field) => {
+			this.sort(function(a, b) { return b[field] - a[field]; });
+		};
 	};
 
 	function Project() {
@@ -20,7 +66,7 @@ window.opera.login = (mainHandler) => {
 						content.region = this;
 						result.push(Object.assign(new Deployment(), content));
 					});
-					resultHandler(result);
+					resultHandler(Object.assign(new Deployments(), result));
 				}, errorHandler);
 			}
 		};
@@ -33,12 +79,35 @@ window.opera.login = (mainHandler) => {
 						content.region = this.region;
 						result.push(Object.assign(new Catalog(), content));
 					});
-					resultHandler(result);
+					resultHandler(Object.assign(new Catalogs(), result));
 				}, errorHandler);
 			}
 		};
 
 		this.print = () => { console.log(this); }
+	};
+
+	function Projects() {
+		this.readById = (id) => {
+			this.forEach((content) => { if (id == content.id) { return content; } });
+			return None
+		};
+		this.searchByName = (name) => {
+			let result = [];
+			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
+			return Object.assign(new Projects(), result)
+		};
+		this.searchByField = (field, value) => {
+			let result = [];
+			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
+			return Object.assign(new Projects(), result)
+		}
+		this.ascBy = (field) => {
+			this.sort(function(a, b) { return a[field] - b[field]; });
+		};
+		this.descBy = (field) => {
+			this.sort(function(a, b) { return b[field] - a[field]; });
+		};
 	};
 
 	function Region() {
@@ -50,7 +119,7 @@ window.opera.login = (mainHandler) => {
 						content.region = this;
 						result.push(Object.assign(new Deployment(), content));
 					});
-					resultHandler(result);
+					resultHandler(Object.assign(new Deployments(), result));
 				}, errorHandler);
 			}
 		};
@@ -63,7 +132,7 @@ window.opera.login = (mainHandler) => {
 						content.region = this.region;
 						result.push(Object.assign(new Catalog(), content));
 					});
-					resultHandler(result);
+					resultHandler(Object.assign(new Catalogs(), result));
 				}, errorHandler);
 			}
 		};
@@ -76,7 +145,7 @@ window.opera.login = (mainHandler) => {
 						content.region = this;
 						result.push(Object.assign(new Project(), content));
 					});
-					resultHandler(result);
+					resultHandler(Object.assign(new Projects(), result));
 				}, errorHandler);
 			}
 		};
@@ -89,7 +158,7 @@ window.opera.login = (mainHandler) => {
 			fetch(`/aria/aa/${url}`, {
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.aa[this.hostname].accessToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
 					"AA-Host": this.hostname,
 					"Accept": "application/json; charset=utf-8"
 				}
@@ -107,7 +176,7 @@ window.opera.login = (mainHandler) => {
 				method: "POST",
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.aa[this.hostname].accessToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
 					"AA-Host": this.hostname,
 					"Content-Type": "application/json; charset=utf-8",
 					"Accept": "application/json; charset=utf-8"
@@ -127,7 +196,7 @@ window.opera.login = (mainHandler) => {
 				method: "PUT",
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.aa[this.hostname].accessToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
 					"AA-Host": this.hostname,
 					"Content-Type": "application/json; charset=utf-8",
 					"Accept": "application/json; charset=utf-8"
@@ -147,7 +216,7 @@ window.opera.login = (mainHandler) => {
 				method: "PATCH",
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.aa[this.hostname].accessToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
 					"AA-Host": this.hostname,
 					"Content-Type": "application/json; charset=utf-8",
 					"Accept": "application/json; charset=utf-8"
@@ -167,7 +236,7 @@ window.opera.login = (mainHandler) => {
 				method: "DELETE",
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.aa[this.hostname].accessToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
 					"AA-Host": this.hostname,
 					"Accept": "application/json; charset=utf-8"
 				}
@@ -183,21 +252,17 @@ window.opera.login = (mainHandler) => {
 
 	window.opera.getRegions = () => {
 		result = []
-		window.opera.aa.hostnames.forEach((hostname) => {
-			result.push(Object.assign(new Region(), {
-				hostname: hostname,
-				name: window.opera.aa[hostname].name,
-				status: window.opera.aa[hostname].status
-			}));
+		window.opera.regions.hostnames.forEach((hostname) => {
+			result.push(Object.assign(new Region(), window.opera.regions[hostname]));
 		});
 		return result;
 	};
 
 	window.common.init(() => {
 		window.common.auth.loginMiddleWare = (loginProcess) => {
-			let aaEndpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
-			if (aaEndpointId) {
-				fetch(`/uerp/v1/aria/endpoint/${aaEndpointId}`, {
+			let endpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
+			if (endpointId) {
+				fetch(`/uerp/v1/aria/endpoint/${endpointId}`, {
 					headers: window.common.auth.headers
 				}).then((res) => {
 					if (res.ok) { return res.json(); }
@@ -206,14 +271,14 @@ window.opera.login = (mainHandler) => {
 						window.location.replace("/aria/auth/login");
 					}
 				}).then((endpoint) => {
-					let aa = {};
-					aa.hostnames = [];
-					endpoint.aa.forEach((aaEndpoint) => {
-						aa.hostnames.push(aaEndpoint.hostname);
-						aa[aaEndpoint.hostname] = aaEndpoint
+					let regions = {};
+					regions.hostnames = [];
+					endpoint.regions.forEach((region) => {
+						regions.hostnames.push(region.hostname);
+						regions[region.hostname] = region
 					});
 					window.opera.vidm = endpoint.vidm;
-					window.opera.aa = aa
+					window.opera.regions = regions;
 					loginProcess();
 				});
 			} else {
