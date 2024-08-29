@@ -18,6 +18,7 @@ function main() {
 	regions.forEach((region) => {
 		region.print();
 		region.getProjects((projects) => {
+			console.log(projects);
 			projects.forEach((project) => {
 				project.print();
 				project.getCatalogs((catalogs) => {
