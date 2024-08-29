@@ -19,10 +19,10 @@ window.opera.login = (mainHandler) => {
 			return setArrayFunctions(result);
 		}
 		arr.sortAscBy = (field) => {
-			arr.sort(function(a, b) { return a[field] - b[field]; });
+			return setArrayFunctions(arr.sort(function(a, b) { return a[field] - b[field]; }));
 		};
 		arr.sortDescBy = (field) => {
-			arr.sort(function(a, b) { return b[field] - a[field]; });
+			return setArrayFunctions(arr.sort(function(a, b) { return b[field] - a[field]; }));
 		};
 		return arr;
 	}
