@@ -18,10 +18,10 @@ window.opera.login = (mainHandler) => {
 			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
 			return setArrayFunctions(result);
 		}
-		arr.ascBy = (field) => {
+		arr.sortAscBy = (field) => {
 			this.sort(function(a, b) { return a[field] - b[field]; });
 		};
-		arr.descBy = (field) => {
+		arr.sortDescBy = (field) => {
 			this.sort(function(a, b) { return b[field] - a[field]; });
 		};
 		return arr;

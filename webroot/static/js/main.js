@@ -18,15 +18,16 @@ function main() {
 	regions.forEach((region) => {
 		region.print();
 		region.getProjects((projects) => {
-			console.log(projects);
 			projects.forEach((project) => {
 				project.print();
 				project.getCatalogs((catalogs) => {
+					catalogs.sortDescBy('name');
 					catalogs.forEach((catalog) => {
 						catalog.print();
 					});
 				});
 				project.getDeployments((deployments) => {
+					deployments.sortDescBy('name');
 					deployments.forEach((deployment) => {
 						deployment.print();
 					})
