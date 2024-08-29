@@ -6,12 +6,12 @@ function main() {
 	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
 	document.getElementById("vidm-access-token").innerText = window.opera.vidm.accessToken;
 
-	let aaDom = document.getElementById("aa-access-tokens");
-	window.opera.aa.hostnames.forEach((hostname) => {
-		let aa = window.opera.aa[hostname];
+	let rgionsDom = document.getElementById("regions-access-tokens");
+	window.opera.regions.hostnames.forEach((hostname) => {
+		let region = window.opera.regions[hostname];
 		let dom = document.createElement('p');
-		dom.innerText = `${hostname}: ${aa.accessToken}`;
-		aaDom.appendChild(dom);
+		dom.innerText = `${hostname}: ${region.accessToken}`;
+		regionsDom.appendChild(dom);
 	});
 
 	let regions = window.opera.getRegions();
