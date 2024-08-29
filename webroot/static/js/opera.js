@@ -13,12 +13,12 @@ window.opera.login = (mainHandler) => {
 			return None
 		};
 		this.searchByName = (name) => {
-			let result = [];
+			let result = new Array();
 			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
 			return Object.assign(new Projects(), result)
 		};
 		this.searchByField = (field, value) => {
-			let result = [];
+			let result = new Array();
 			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
 			return Object.assign(new Projects(), result)
 		}
@@ -40,12 +40,12 @@ window.opera.login = (mainHandler) => {
 			return None
 		};
 		this.searchByName = (name) => {
-			let result = [];
+			let result = new Array();
 			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
 			return Object.assign(new Projects(), result)
 		};
 		this.searchByField = (field, value) => {
-			let result = [];
+			let result = new Array();
 			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
 			return Object.assign(new Projects(), result)
 		}
@@ -61,7 +61,7 @@ window.opera.login = (mainHandler) => {
 		this.getDeployments = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/deployment/api/deployments?projects=${this.id}`, (data) => {
-					result = [];
+					let result = new Array();
 					data.content.forEach((content) => {
 						content.region = this;
 						result.push(Object.assign(new Deployment(), content));
@@ -74,7 +74,7 @@ window.opera.login = (mainHandler) => {
 		this.getCatalogs = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/catalog/api/items?projects=${this.id}`, (data) => {
-					result = [];
+					let result = new Array();
 					data.content.forEach((content) => {
 						content.region = this.region;
 						result.push(Object.assign(new Catalog(), content));
@@ -93,12 +93,12 @@ window.opera.login = (mainHandler) => {
 			return None
 		};
 		this.searchByName = (name) => {
-			let result = [];
+			let result = new Array();
 			this.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
 			return Object.assign(new Projects(), result)
 		};
 		this.searchByField = (field, value) => {
-			let result = [];
+			let result = new Array();
 			this.forEach((content) => { if (value == content[field]) { result.push(content); } });
 			return Object.assign(new Projects(), result)
 		}
@@ -114,7 +114,7 @@ window.opera.login = (mainHandler) => {
 		this.getDeployments = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/deployment/api/deployments', (data) => {
-					result = [];
+					let result = new Array();
 					data.content.forEach((content) => {
 						content.region = this;
 						result.push(Object.assign(new Deployment(), content));
@@ -127,7 +127,7 @@ window.opera.login = (mainHandler) => {
 		this.getCatalogs = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get('/catalog/api/items', (data) => {
-					result = [];
+					let result = new Array();
 					data.content.forEach((content) => {
 						content.region = this.region;
 						result.push(Object.assign(new Catalog(), content));
@@ -140,7 +140,7 @@ window.opera.login = (mainHandler) => {
 		this.getProjects = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/deployment/api/deployments', (data) => {
-					result = [];
+					let result = new Array();
 					data.content.forEach((content) => {
 						content.region = this;
 						result.push(Object.assign(new Project(), content));
@@ -251,7 +251,7 @@ window.opera.login = (mainHandler) => {
 	};
 
 	window.opera.getRegions = () => {
-		result = []
+		let result = new Array();
 		window.opera.regions.hostnames.forEach((hostname) => {
 			result.push(Object.assign(new Region(), window.opera.regions[hostname]));
 		});
