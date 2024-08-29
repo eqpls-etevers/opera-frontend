@@ -22,6 +22,7 @@ function main() {
 				project.print();
 				project.getCatalogs((catalogs) => {
 					catalogs.sortDescBy('name');
+					catalogs.sortAscBy('name');
 					catalogs.forEach((catalog) => {
 						catalog.print();
 					});
