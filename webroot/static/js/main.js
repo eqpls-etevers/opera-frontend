@@ -25,6 +25,11 @@ function main() {
 						catalog.print();
 					});
 				});
+				project.getDeployments((deployments) => {
+					deployments.forEach((deployment) => {
+						deployment.print();
+					})
+				});
 			});
 		});
 	});
