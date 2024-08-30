@@ -3,7 +3,7 @@
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 
-	let resourceActions = {
+	window.opera.resourceActions = {
 		"Cloud.vSphere.Machine.Update.Tags": "태그 수정",
 
 		"Cloud.vSphere.Machine.PowerOn": "VM 전원 켬",
@@ -37,7 +37,7 @@ window.opera.login = (mainHandler) => {
 		"Cloud.vSphere.Machine.Change.SecurityGroup": "보안 그룹 변경",
 		"Cloud.SecurityGroup.Delete": "보안 그룹 삭제",
 		"Cloud.SecurityGroup.Reconfigure.SecurityGroup": "보안 그룹 수정",
-	}
+	};
 
 	function setArrayFunctions(arr) {
 		arr.readById = (id) => {
@@ -103,7 +103,7 @@ window.opera.login = (mainHandler) => {
 					let result = [];
 					data.forEach((content) => {
 						content.region = this.region;
-						content.displayName = resourceActions[content.id];
+						content.displayName = window.opera.resourceActions[content.id];
 						result.push(Object.assign(new Action(), content));
 					});
 					resultHandler(setArrayFunctions(result));
