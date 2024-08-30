@@ -130,11 +130,64 @@ window.opera.login = (mainHandler) => {
 		this.print = () => { console.log(this); }
 	};
 
+	function RequestForm() {
+		this.print = () => { console.log(this); }
+	};
+
 	function Catalog() {
+		this.getRequestForm = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				if (this.schema) {
+					if (data.form) {
+						resultHandler(Object.assign(new RequestForm(), {
+							schema: this.schema,
+							form: this.form
+						}));
+					} else {
+						resultHandler(Object.assign(new RequestForm(), {
+							schema: this.schema,
+							form: null
+						}));
+					}
+				} else {
+					this.region.rest.get(`/catalog/api/items/${this.id}`, (data) => {
+						this.schema = data.schema;
+						if (data.formId) {
+							this.region.rest.get(`/form-service/api/forms/renderer/model?formId=${this.formId}`, (data) => {
+								this.form = data.model;
+								resultHandler(Object.assign(new RequestForm(), {
+									schema: this.schema,
+									form: this.form
+								}));
+							}, errorHandler);
+						} else {
+							resultHandler(Object.assign(new RequestForm(), {
+								schema: this.schema,
+								form: null
+							}));
+						}
+					}, errorHandler);
+				}
+			}
+		};
+
 		this.print = () => { console.log(this); }
 	};
 
 	function Project() {
+		this.getResources = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/resources?projects=${this.id}`, (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Resource(), content))
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
 		this.getDeployments = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/deployment/api/deployments?projects=${this.id}`, (data) => {
@@ -165,6 +218,19 @@ window.opera.login = (mainHandler) => {
 	};
 
 	function Region() {
+		this.getResources = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.rest.get('/deployment/api/resources', (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this;
+						result.push(Object.assign(new Resource(), content))
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
 		this.getDeployments = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/deployment/api/deployments', (data) => {
