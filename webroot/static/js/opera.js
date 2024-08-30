@@ -22,20 +22,15 @@ window.opera.login = (mainHandler) => {
 			if (arr.length > 0) {
 				let val = arr[0][field]
 				if (typeof val == "string") {
-					console.log(`sort asc by ${field} string type`)
-					arr.sort(function(a, b) {
+					arr.sort((a, b) => {
 						let aval = a[field];
 						let bval = b[field];
 						return aval < bval ? -1 : aval > bval ? 1 : 0;
-						//return a[field] > b[field];
 					});
 				} else if (typeof val == "number") {
-					console.log(`sort asc by ${field} number type`)
-					arr.sort(function(a, b) {
-						return a[field] - b[field];
-					});
+					arr.sort((a, b) => { return a[field] - b[field]; });
 				} else {
-					console.error("could not sort");
+					console.error("could not sort", arr);
 				}
 			}
 			return arr;
@@ -44,28 +39,58 @@ window.opera.login = (mainHandler) => {
 			if (arr.length > 0) {
 				let val = arr[0][field]
 				if (typeof val == "string") {
-					console.log(`sort desc by ${field} string type`)
-					arr.sort(function(a, b) {
+					arr.sort((a, b) => {
 						let aval = a[field];
 						let bval = b[field];
 						return aval > bval ? -1 : aval < bval ? 1 : 0;
-						//return b[field] > a[field];
 					});
 				} else if (typeof val == "number") {
-					console.log(`sort desc by ${field} number type`)
-					arr.sort(function(a, b) {
-						return b[field] - a[field];
-					});
+					arr.sort((a, b) => { return b[field] - a[field]; });
 				} else {
-					console.error("could not sort");
+					console.error("could not sort", arr);
 				}
 			}
 			return arr
 		};
 		return arr;
 	}
+	
+	function Action() {
+		this.print = () => { console.log(this); }
+	};
+
+	function Resource() {
+		this.getActions = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/resources/${this.id}/actions`, (data) => {
+					console.log(data);
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Action(), content));
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.print = () => { console.log(this); }
+	};
 
 	function Deployment() {
+		this.getResources = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/deployments/${this.id}/resources`, (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Resource(), content));
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
 		this.print = () => { console.log(this); }
 	};
 
@@ -79,13 +104,13 @@ window.opera.login = (mainHandler) => {
 				this.region.rest.get(`/deployment/api/deployments?projects=${this.id}`, (data) => {
 					let result = [];
 					data.content.forEach((content) => {
-						content.region = this;
+						content.region = this.region;
 						result.push(Object.assign(new Deployment(), content));
 					});
 					resultHandler(setArrayFunctions(result));
 				}, errorHandler);
 			}
-		};
+		}; 
 
 		this.getCatalogs = (resultHandler, errorHandler) => {
 			if (resultHandler) {
@@ -122,7 +147,7 @@ window.opera.login = (mainHandler) => {
 				this.region.rest.get('/catalog/api/items', (data) => {
 					let result = [];
 					data.content.forEach((content) => {
-						content.region = this.region;
+						content.region = this;
 						result.push(Object.assign(new Catalog(), content));
 					});
 					resultHandler(setArrayFunctions(result));
