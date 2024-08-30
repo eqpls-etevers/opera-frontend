@@ -63,9 +63,8 @@ window.opera.login = (mainHandler) => {
 		this.getActions = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/deployment/api/resources/${this.id}/actions`, (data) => {
-					console.log(data);
 					let result = [];
-					data.content.forEach((content) => {
+					data.forEach((content) => {
 						content.region = this.region;
 						result.push(Object.assign(new Action(), content));
 					});
