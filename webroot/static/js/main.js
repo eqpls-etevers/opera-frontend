@@ -15,30 +15,28 @@ function main() {
 	});
 
 	let regions = window.opera.getRegions();
+	regions.print();
 	regions.forEach((region) => {
-		region.print();
 		region.getProjects((projects) => {
+			projects.print();
 			projects.forEach((project) => {
-				project.print();
 				project.getCatalogs((catalogs) => {
+					catalogs.print();
 					catalogs.forEach((catalog) => {
-						catalog.print();
 						catalog.getRequestForm((form) => {
 							form.print();
 						});
 					});
 				});
 				project.getDeployments((deployments) => {
+					deployments.print();
 					deployments.forEach((deployment) => {
-						deployment.print();
 						deployment.getResources((resources) => {
+							resources.print();
 							resources.forEach((resource) => {
-								resource.print();
 								resource.getActions((actions) => {
 									actions.sortAscBy("displayName");
-									actions.forEach((action) => {
-										action.print();
-									});
+									actions.print();
 								});
 							});
 						});

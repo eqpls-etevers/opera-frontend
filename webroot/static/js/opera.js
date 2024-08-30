@@ -62,7 +62,7 @@ window.opera.login = (mainHandler) => {
 			let result = [];
 			arr.forEach((content) => { if (value == content[field]) { result.push(content); } });
 			return setArrayFunctions(result);
-		}
+		};
 		arr.sortAscBy = (field) => {
 			if (arr.length > 0) {
 				let val = arr[0][field]
@@ -97,6 +97,7 @@ window.opera.login = (mainHandler) => {
 			}
 			return arr
 		};
+		arr.print = () => { console.log(arr); };
 		return arr;
 	}
 
@@ -428,7 +429,7 @@ window.opera.login = (mainHandler) => {
 		window.opera.regions.hostnames.forEach((hostname) => {
 			result.push(Object.assign(new Region(), window.opera.regions[hostname]));
 		});
-		return result;
+		return setArrayFunctions(result);
 	};
 
 	window.common.init(() => {
