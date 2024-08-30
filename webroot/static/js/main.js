@@ -23,8 +23,9 @@ function main() {
 				project.getCatalogs((catalogs) => {
 					catalogs.forEach((catalog) => {
 						catalog.print();
-						let form = catalog.getgetRequestForm();
-						form.print();
+						catalog.getgetRequestForm((form) => {
+							form.print();
+						});
 					});
 				});
 				project.getDeployments((deployments) => {
