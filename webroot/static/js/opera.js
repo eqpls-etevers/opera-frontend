@@ -111,7 +111,7 @@ window.opera.login = (mainHandler) => {
 				this.region.rest.get(`/deployment/api/resources/${this.id}/actions`, (data) => {
 					let result = [];
 					data.forEach((content) => {
-						if (window.opera.resourceActions.hasAttribute(content.id)) {
+						if (content.id in window.opera.resourceActions) {
 							content.region = this.region;
 							content.displayName = window.opera.resourceActions[content.id];
 							result.push(Object.assign(new Action(), content));	
