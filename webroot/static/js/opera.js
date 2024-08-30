@@ -140,11 +140,13 @@ window.opera.login = (mainHandler) => {
 				if (this.schema) {
 					if (data.form) {
 						resultHandler(Object.assign(new RequestForm(), {
+							catalog: this,
 							schema: this.schema,
 							form: this.form
 						}));
 					} else {
 						resultHandler(Object.assign(new RequestForm(), {
+							catalog: this,
 							schema: this.schema,
 							form: null
 						}));
@@ -157,12 +159,14 @@ window.opera.login = (mainHandler) => {
 							this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${data.formId}`, {}, (data) => {
 								this.form = data.model;
 								resultHandler(Object.assign(new RequestForm(), {
+									catalog: this,
 									schema: this.schema,
 									form: data.model
 								}));
 							}, errorHandler);
 						} else {
 							resultHandler(Object.assign(new RequestForm(), {
+								catalog: this,
 								schema: this.schema,
 								form: null
 							}));
