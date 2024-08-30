@@ -4,19 +4,21 @@ window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 
 	window.opera.resourceActions = {
+		
+		// VM
 		"Cloud.vSphere.Machine.Update.Tags": "태그 수정",
 
-		"Cloud.vSphere.Machine.PowerOn": "VM 전원 켬",
-		"Cloud.vSphere.Machine.PowerOff": "VM 전원 끔",
-		"Cloud.vSphere.Machine.Reboot": "VM 재시작",
-		"Cloud.vSphere.Machine.Suspend": "VM 일시 정지",
+		"Cloud.vSphere.Machine.PowerOn": "전원 켬",
+		"Cloud.vSphere.Machine.PowerOff": "전원 끔",
+		"Cloud.vSphere.Machine.Reboot": "재시작",
+		"Cloud.vSphere.Machine.Suspend": "일시 정지",
 		"Cloud.vSphere.Machine.Shutdown": "운영체제 종료",
 
-		"Cloud.vSphere.Machine.Reset": "VM 초기화",
-		"Cloud.vSphere.Machine.Rebuild": "VM 재구성",
-		"Cloud.vSphere.Machine.Delete": "VM 삭제",
+		"Cloud.vSphere.Machine.Reset": "초기화",
+		"Cloud.vSphere.Machine.Rebuild": "재구성",
+		"Cloud.vSphere.Machine.Delete": "삭제",
 
-		"Cloud.vSphere.Machine.Resize": "VM 성능 조정",
+		"Cloud.vSphere.Machine.Resize": "성능 조정",
 		"Cloud.vSphere.Machine.Unregister": "관리 해지",
 
 		"Cloud.vSphere.Machine.ApplySaltConfiguration": "솔트스택 설정 적용",
@@ -35,8 +37,15 @@ window.opera.login = (mainHandler) => {
 		"Cloud.vSphere.Machine.Remote.Console": "원격 콘솔 연결",
 
 		"Cloud.vSphere.Machine.Change.SecurityGroup": "보안 그룹 변경",
-		"Cloud.SecurityGroup.Delete": "보안 그룹 삭제",
-		"Cloud.SecurityGroup.Reconfigure.SecurityGroup": "보안 그룹 수정",
+		
+		// Disk
+		"Cloud.vSphere.Disk.Disk.Change.Display.Name": "이름 변경",
+		"Cloud.vSphere.Disk.Disk.Resize": "크기 조정",
+		"Cloud.vSphere.Disk.Update.Tags": "태그 수정",
+		
+		// Security Group
+		"Cloud.SecurityGroup.Delete": "삭제",
+		"Cloud.SecurityGroup.Reconfigure.SecurityGroup": "재설정",
 	};
 
 	function setArrayFunctions(arr) {
