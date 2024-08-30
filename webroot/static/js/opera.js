@@ -285,7 +285,7 @@ window.opera.login = (mainHandler) => {
 
 		this.getCatalogs = (resultHandler, errorHandler) => {
 			if (resultHandler) {
-				this.region.rest.get('/catalog/api/items', (data) => {
+				this.rest.get('/catalog/api/items', (data) => {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this;
