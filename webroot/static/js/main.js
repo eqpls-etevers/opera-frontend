@@ -31,6 +31,11 @@ function main() {
 						deployment.getResources((resources) => {
 							resources.forEach((resource) => {
 								resource.print();
+								resource.getActions((actions) => {
+									actions.forEach((action) => {
+										action.print();
+									});
+								});
 							});
 						});
 					});
