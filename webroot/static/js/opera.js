@@ -3,7 +3,7 @@
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 
-	let resourceActionToKr = {
+	let resourceActions = {
 		"Cloud.vSphere.Machine.Update.Tags": "태그 수정",
 
 		"Cloud.vSphere.Machine.PowerOn": "VM 전원 켬",
@@ -103,7 +103,7 @@ window.opera.login = (mainHandler) => {
 					let result = [];
 					data.forEach((content) => {
 						content.region = this.region;
-						content.displayNameKr = resourceActionToKr[content.id];
+						content.displayNameKr = resourceActions[content.id];
 						result.push(Object.assign(new Action(), content));
 					});
 					resultHandler(setArrayFunctions(result));
