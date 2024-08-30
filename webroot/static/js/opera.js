@@ -92,7 +92,7 @@ window.opera.login = (mainHandler) => {
 	}
 
 	function Action() {
-		this.print = () => { console.log(this); }
+		this.print = () => { console.log(this.displayNameKr); }
 	};
 
 	function Resource() {
