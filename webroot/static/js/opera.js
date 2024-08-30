@@ -92,7 +92,8 @@ window.opera.login = (mainHandler) => {
 	}
 
 	function Action() {
-		this.print = () => { console.log(this.displayNameKr); }
+		this.checkpoint = () => { window.opera.Action = this; };
+		this.print = () => { console.log(this.displayNameKr); };
 	};
 
 	function Resource() {
@@ -110,7 +111,8 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
-		this.print = () => { console.log(this); }
+		this.checkpoint = () => { window.opera.Resource = this; };
+		this.print = () => { console.log(this); };
 	};
 
 	function Deployment() {
@@ -127,11 +129,13 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
-		this.print = () => { console.log(this); }
+		this.checkpoint = () => { window.opera.Deployment = this; };
+		this.print = () => { console.log(this); };
 	};
 
 	function RequestForm() {
-		this.print = () => { console.log(this); }
+		this.checkpoint = () => { window.opera.ResourceForm = this; };
+		this.print = () => { console.log(this); };
 	};
 
 	function Catalog() {
@@ -151,7 +155,6 @@ window.opera.login = (mainHandler) => {
 								this.schema = detail.schema;
 								this.formId = detail.formId;
 								if (this.formId) {
-									///form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=801bd6d5-8c95-450e-adec-caa7d0a3cf8f&projectId=&resourceId=&deploymentId=&sourceType=com.vmw.blueprint.version&sourceId=d29bea64-9765-3126-bfd7-2ef23f5f88e9%2F2
 									this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema, (form) => {
 										this.form = form.model;
 										resultHandler(Object.assign(new RequestForm(), {
@@ -205,7 +208,8 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
-		this.print = () => { console.log(this); }
+		this.checkpoint = () => { window.opera.Catalog = this; };
+		this.print = () => { console.log(this); };
 	};
 
 	function Project() {
@@ -248,7 +252,8 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
-		this.print = () => { console.log(this); }
+		this.checkpoint = () => { window.opera.Project = this; };
+		this.print = () => { console.log(this); };
 	};
 
 	function Region() {
@@ -304,7 +309,8 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
-		this.print = () => { console.log(this); }
+		this.checkpoint = () => { window.opera.Region = this; };
+		this.print = () => { console.log(this); };
 
 		this.rest = {};
 
