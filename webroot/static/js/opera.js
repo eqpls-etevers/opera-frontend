@@ -57,7 +57,6 @@ window.opera.login = (mainHandler) => {
 		arr.sortAscBy = (field) => {
 			if (arr.length > 0) {
 				let val = arr[0][field]
-				console.log(field, val);
 				if (typeof val == "string") {
 					arr.sort((a, b) => {
 						let aval = a[field];
