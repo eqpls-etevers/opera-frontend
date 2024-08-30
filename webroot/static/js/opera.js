@@ -103,7 +103,7 @@ window.opera.login = (mainHandler) => {
 					let result = [];
 					data.forEach((content) => {
 						content.region = this.region;
-						content.displayNameKr = resourceActions[content.id];
+						content.displayName = resourceActions[content.id];
 						result.push(Object.assign(new Action(), content));
 					});
 					resultHandler(setArrayFunctions(result));
