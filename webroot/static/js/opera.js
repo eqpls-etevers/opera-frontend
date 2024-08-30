@@ -3,6 +3,7 @@
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 
+	// function of getting region list is only sync type
 	window.opera.getRegions = () => {
 		let result = [];
 		window.opera.regions.hostnames.forEach((hostname) => {
@@ -11,7 +12,12 @@ window.opera.login = (mainHandler) => {
 		return setArrayFunctions(result);
 	};
 
+	// all functions & objects are async types which must be required result handler (function type) in params
+
+	// Region 
 	function Region() {
+
+		// get project list in region
 		this.getProjects = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/iaas/api/projects', (data) => {
@@ -25,6 +31,7 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// get catalog list in region
 		this.getCatalogs = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/catalog/api/items', (data) => {
@@ -38,6 +45,7 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// get deployment list in region
 		this.getDeployments = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/deployment/api/deployments', (data) => {
@@ -51,6 +59,7 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// get resource list in region
 		this.getResources = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.rest.get('/deployment/api/resources', (data) => {
@@ -64,10 +73,13 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// register current region to "window.opera.Region" property
 		this.checkpoint = () => { window.opera.Region = this; };
 
+		// print to console
 		this.print = () => { console.log(this); };
 
+		// internal methods
 		this.rest = {};
 		this.rest.get = (url, resultHandler, errorHandler) => {
 			fetch(`/aria/aa/${url}`, {
@@ -161,20 +173,10 @@ window.opera.login = (mainHandler) => {
 		};
 	};
 
+	// Project
 	function Project() {
-		this.getResources = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/resources?projects=${this.id}`, (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this.region;
-						result.push(Object.assign(new Resource(), content))
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
 
+		// get catalog list in project
 		this.getCatalogs = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/catalog/api/items?projects=${this.id}`, (data) => {
@@ -188,6 +190,7 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// get deployment list in project
 		this.getDeployments = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/deployment/api/deployments?projects=${this.id}`, (data) => {
@@ -201,11 +204,31 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// get resource list in project
+		this.getResources = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/resources?projects=${this.id}`, (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Resource(), content))
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		// register current project to "window.opera.Project" property
 		this.checkpoint = () => { window.opera.Project = this; };
+		
+		// print to console
 		this.print = () => { console.log(this); };
 	};
 
+	// Catalog
 	function Catalog() {
+		
+		// get request form descriptor of current catalog
 		this.getRequestForm = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				if (this.schema) {
@@ -281,11 +304,17 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// register current catalog to "window.opera.Catalog" property
 		this.checkpoint = () => { window.opera.Catalog = this; };
+		
+		// print to console
 		this.print = () => { console.log(this); };
 	};
 
+	// Request Form
 	function RequestForm() {
+		
+		// submit request data
 		this.submit = (inputProperties, resultHandler, errorHandler) => {
 			switch (this.type) {
 				case "catalog":
@@ -302,11 +331,15 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// get html data which is drawn by this.schem & this.form information
 		this.draw = () => {
-			console.log("draw is not implemented now");
+			return "<div>draw is not implemented now</div>";
 		};
 
-		this.checkpoint = () => { window.opera.ResourceForm = this; };
+		// register current request form to "window.opera.RequestForm" property
+		this.checkpoint = () => { window.opera.RequestForm = this; };
+		
+		// print to console
 		this.print = () => { console.log(this); };
 	};
 
