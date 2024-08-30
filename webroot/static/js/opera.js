@@ -93,7 +93,7 @@ window.opera.login = (mainHandler) => {
 
 	function Action() {
 		this.checkpoint = () => { window.opera.Action = this; };
-		this.print = () => { console.log(this.displayNameKr); };
+		this.print = () => { console.log(this); };
 	};
 
 	function Resource() {
