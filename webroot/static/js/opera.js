@@ -154,11 +154,11 @@ window.opera.login = (mainHandler) => {
 						this.schema = data.schema;
 						if (data.formId) {
 							this.formId = data.formId;
-							this.region.rest.get(`/form-service/api/forms/renderer/model?formId=${this.formId}`, (data) => {
+							this.region.rest.get(`/form-service/api/forms/renderer/model?formId=${data.formId}`, (data) => {
 								this.form = data.model;
 								resultHandler(Object.assign(new RequestForm(), {
 									schema: this.schema,
-									form: this.form
+									form: data.model
 								}));
 							}, errorHandler);
 						} else {
