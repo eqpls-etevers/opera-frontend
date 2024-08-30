@@ -32,6 +32,7 @@ function main() {
 							resources.forEach((resource) => {
 								resource.print();
 								resource.getActions((actions) => {
+									actions.sortAscBy('displayNameKr');
 									actions.forEach((action) => {
 										action.print();
 									});
