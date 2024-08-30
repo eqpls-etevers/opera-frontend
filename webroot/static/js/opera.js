@@ -111,9 +111,13 @@ window.opera.login = (mainHandler) => {
 				this.region.rest.get(`/deployment/api/resources/${this.id}/actions`, (data) => {
 					let result = [];
 					data.forEach((content) => {
-						content.region = this.region;
-						content.displayName = window.opera.resourceActions[content.id];
-						result.push(Object.assign(new Action(), content));
+						if (window.opera.resourceActions.hasAttribute(content.id)) {
+							content.region = this.region;
+							content.displayName = window.opera.resourceActions[content.id];
+							result.push(Object.assign(new Action(), content));	
+						} else {
+							console.warn("could not support action", content);
+						}
 					});
 					resultHandler(setArrayFunctions(result));
 				}, errorHandler);
