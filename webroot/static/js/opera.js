@@ -153,6 +153,7 @@ window.opera.login = (mainHandler) => {
 					this.region.rest.get(`/catalog/api/items/${this.id}`, (data) => {
 						this.schema = data.schema;
 						if (data.formId) {
+							this.formId = data.formId;
 							this.region.rest.get(`/form-service/api/forms/renderer/model?formId=${this.formId}`, (data) => {
 								this.form = data.model;
 								resultHandler(Object.assign(new RequestForm(), {
