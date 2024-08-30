@@ -23,7 +23,7 @@ function main() {
 				project.getCatalogs((catalogs) => {
 					catalogs.forEach((catalog) => {
 						catalog.print();
-						catalog.getgetRequestForm((form) => {
+						catalog.getRequestForm((form) => {
 							form.print();
 						});
 					});
