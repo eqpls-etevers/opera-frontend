@@ -3,8 +3,403 @@
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 
+	window.opera.getRegions = () => {
+		let result = [];
+		window.opera.regions.hostnames.forEach((hostname) => {
+			result.push(Object.assign(new Region(), window.opera.regions[hostname]));
+		});
+		return setArrayFunctions(result);
+	};
+
+	function Region() {
+		this.getProjects = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.rest.get('/iaas/api/projects', (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this;
+						result.push(Object.assign(new Project(), content));
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.getCatalogs = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.rest.get('/catalog/api/items', (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this;
+						result.push(Object.assign(new Catalog(), content));
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.getDeployments = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.rest.get('/deployment/api/deployments', (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this;
+						result.push(Object.assign(new Deployment(), content));
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.getResources = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.rest.get('/deployment/api/resources', (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this;
+						result.push(Object.assign(new Resource(), content))
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.checkpoint = () => { window.opera.Region = this; };
+
+		this.print = () => { console.log(this); };
+
+		this.rest = {};
+		this.rest.get = (url, resultHandler, errorHandler) => {
+			fetch(`/aria/aa/${url}`, {
+				headers: {
+					"Authorization": window.common.auth.bearerToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
+					"AA-Host": this.hostname,
+					"Accept": "application/json; charset=utf-8"
+				}
+			}).then((res) => {
+				if (res.ok) { return res.json(); }
+				if (errorHandler) { errorHandler(res); }
+				throw res
+			}).then((data) => {
+				if (resultHandler) { resultHandler(data); }
+			});
+		};
+		this.rest.post = (url, data, resultHandler, errorHandler) => {
+			fetch(`/aria/aa${url}`, {
+				method: "POST",
+				headers: {
+					"Authorization": window.common.auth.bearerToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
+					"AA-Host": this.hostname,
+					"Content-Type": "application/json; charset=utf-8",
+					"Accept": "application/json; charset=utf-8"
+				},
+				body: JSON.stringify(data)
+			}).then((res) => {
+				if (res.ok) { return res.json(); }
+				if (errorHandler) { errorHandler(res); }
+				throw res
+			}).then((data) => {
+				if (resultHandler) { resultHandler(data); }
+			});
+		};
+		this.rest.put = (url, data, resultHandler, errorHandler) => {
+			fetch(`/aria/aa${url}`, {
+				method: "PUT",
+				headers: {
+					"Authorization": window.common.auth.bearerToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
+					"AA-Host": this.hostname,
+					"Content-Type": "application/json; charset=utf-8",
+					"Accept": "application/json; charset=utf-8"
+				},
+				body: JSON.stringify(data)
+			}).then((res) => {
+				if (res.ok) { return res.json(); }
+				if (errorHandler) { errorHandler(res); }
+				throw res
+			}).then((data) => {
+				if (resultHandler) { resultHandler(data); }
+			});
+		};
+		this.rest.patch = (url, data, resultHandler, errorHandler) => {
+			fetch(`/aria/aa${url}`, {
+				method: "PATCH",
+				headers: {
+					"Authorization": window.common.auth.bearerToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
+					"AA-Host": this.hostname,
+					"Content-Type": "application/json; charset=utf-8",
+					"Accept": "application/json; charset=utf-8"
+				},
+				body: JSON.stringify(data)
+			}).then((res) => {
+				if (res.ok) { return res.json(); }
+				if (errorHandler) { errorHandler(res); }
+				throw res
+			}).then((data) => {
+				if (resultHandler) { resultHandler(data); }
+			});
+		};
+		this.rest.delete = (url, resultHandler, errorHandler) => {
+			fetch(`/aria/aa${url}`, {
+				method: "DELETE",
+				headers: {
+					"Authorization": window.common.auth.bearerToken,
+					"AA-Auth": window.opera.regions[this.hostname].accessToken,
+					"AA-Host": this.hostname,
+					"Accept": "application/json; charset=utf-8"
+				}
+			}).then((res) => {
+				if (res.ok) { return res.json(); }
+				if (errorHandler) { errorHandler(res); }
+				throw res
+			}).then((data) => {
+				if (resultHandler) { resultHandler(data); }
+			});
+		};
+	};
+
+	function Project() {
+		this.getResources = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/resources?projects=${this.id}`, (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Resource(), content))
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.getCatalogs = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/catalog/api/items?projects=${this.id}`, (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Catalog(), content));
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.getDeployments = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/deployments?projects=${this.id}`, (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Deployment(), content));
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.checkpoint = () => { window.opera.Project = this; };
+		this.print = () => { console.log(this); };
+	};
+
+	function Catalog() {
+		this.getRequestForm = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				if (this.schema) {
+					resultHandler(Object.assign(new RequestForm(), {
+						type: "catalog",
+						caller: this,
+						schema: this.schema,
+						form: this.form
+					}));
+				} else {
+					this.region.rest.get(`/catalog/api/items/${this.id}/versions`, (versions) => {
+						if (versions.content.length > 0) {
+							let lastVersionId = versions.content[0].id
+							this.region.rest.get(`/catalog/api/items/${this.id}/versions/${lastVersionId}`, (detail) => {
+								this.schema = detail.schema;
+								this.formId = detail.formId;
+								if (this.formId) {
+									this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema, (form) => {
+										this.form = form.model;
+										resultHandler(Object.assign(new RequestForm(), {
+											type: "catalog",
+											caller: this,
+											schema: this.schema,
+											form: this.form
+										}));
+									}, errorHandler);
+								} else {
+									this.form = null;
+									resultHandler(Object.assign(new RequestForm(), {
+										type: "catalog",
+										caller: this,
+										schema: this.schema,
+										form: this.form
+									}));
+								}
+							});
+						} else {
+							this.region.rest.get(`/catalog/api/items/${this.id}`, (detail) => {
+								this.schema = detail.schema;
+								this.formId = detail.formId;
+								if (this.formId) {
+									this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}, (form) => {
+										this.form = form.model;
+										resultHandler(Object.assign(new RequestForm(), {
+											type: "catalog",
+											caller: this,
+											schema: this.schema,
+											form: this.form
+										}));
+									}, () => {
+										this.form = null;
+										resultHandler(Object.assign(new RequestForm(), {
+											type: "catalog",
+											caller: this,
+											schema: this.schema,
+											form: this.form
+										}));
+									});
+								} else {
+									this.form = null;
+									resultHandler(Object.assign(new RequestForm(), {
+										type: "catalog",
+										caller: this,
+										schema: this.schema,
+										form: this.form
+									}));
+								}
+
+							}, errorHandler);
+						}
+					}, errorHandler);
+				}
+			}
+		};
+
+		this.checkpoint = () => { window.opera.Catalog = this; };
+		this.print = () => { console.log(this); };
+	};
+
+	function RequestForm() {
+		this.submit = (inputProperties, resultHandler, errorHandler) => {
+			switch (this.type) {
+				case "catalog":
+					this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties, (data) => {
+						if (resultHandler) { resultHandler(data); };
+					}, errorHandler);
+					break;
+				case "action":
+					inputProperties.actionId = this.caller.id;
+					this.region.rest.post(`/deployment/api/resources/${this.caller.resource.id}/requests`, inputProperties, (data) => {
+						if (resultHandler) { resultHandler(data); };
+					}, errorHandler);
+					break;
+			}
+		};
+
+		this.draw = () => {
+			console.log("draw is not implemented now");
+		};
+
+		this.checkpoint = () => { window.opera.ResourceForm = this; };
+		this.print = () => { console.log(this); };
+	};
+
+	function Deployment() {
+		this.getResources = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/deployments/${this.id}/resources`, (data) => {
+					let result = [];
+					data.content.forEach((content) => {
+						content.region = this.region;
+						result.push(Object.assign(new Resource(), content));
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.checkpoint = () => { window.opera.Deployment = this; };
+		this.print = () => { console.log(this); };
+	};
+
+	function Resource() {
+		this.getProject = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				if (this.properties.project) {
+					this.region.rest.get(`/iaas/api/projects/${this.properties.project}`, (data) => {
+						resultHandler(Object.assign(new Project(), data));
+					}, errorHandler);
+				} else {
+					console.warn("could not get project: this resource may be out of project scopes");
+					if (errorHandler) { errorHandler(); }
+				}
+			}
+		};
+
+		this.getDeployment = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/resources/${this.id}}?expand=deployment`, (data) => {
+					if (data.deployment) {
+						this.region.rest.get(`/deployment/api/deployments/${data.deployment.id}`, (data) => {
+							resultHandler(Object.assign(new Deployment(), data));
+						}, errorHandler);
+					} else {
+						console.warn("could not get deployment: this resource may be out of deployment scopes");
+						if (errorHandler) { errorHandler(); }
+					}
+				}, errorHandler);
+			}
+		};
+
+		this.getActions = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/resources/${this.id}/actions`, (data) => {
+					let result = [];
+					data.forEach((content) => {
+						if (content.id in window.opera.resourceActions) {
+							content.region = this.region;
+							content.resource = this;
+							content.displayName = window.opera.resourceActions[content.id];
+							result.push(Object.assign(new Action(), content));
+						} else {
+							console.warn("could not support action", content);
+						}
+					});
+					resultHandler(setArrayFunctions(result));
+				}, errorHandler);
+			}
+		};
+
+		this.checkpoint = () => { window.opera.Resource = this; };
+		this.print = () => { console.log(this); };
+	};
+
+	function Action() {
+		this.getRequestForm = (resultHandler, errorHandler) => {
+			if (resultHandler) {
+				this.region.rest.get(`/deployment/api/resources/${this.resource.id}/actions/${this.id}`, (data) => {
+					resultHandler(Object.assign(new RequestForm(), {
+						type: "action",
+						caller: this,
+						schema: data.schema,
+						form: null
+					}));
+				}, errorHandler);
+			}
+		};
+
+		this.checkpoint = () => { window.opera.Action = this; };
+		this.print = () => { console.log(this); };
+	};
+
 	window.opera.resourceActions = {
-		
+
 		// VM
 		"Cloud.vSphere.Machine.Update.Tags": "태그 수정",
 
@@ -37,12 +432,12 @@ window.opera.login = (mainHandler) => {
 		"Cloud.vSphere.Machine.Remote.Console": "원격 콘솔 연결",
 
 		"Cloud.vSphere.Machine.Change.SecurityGroup": "보안 그룹 변경",
-		
+
 		// Disk
 		"Cloud.vSphere.Disk.Disk.Change.Display.Name": "이름 변경",
 		"Cloud.vSphere.Disk.Disk.Resize": "크기 조정",
 		"Cloud.vSphere.Disk.Update.Tags": "태그 수정",
-		
+
 		// Security Group
 		"Cloud.SecurityGroup.Delete": "삭제",
 		"Cloud.SecurityGroup.Reconfigure.SecurityGroup": "재설정",
@@ -99,337 +494,6 @@ window.opera.login = (mainHandler) => {
 		};
 		arr.print = () => { console.log(arr); };
 		return arr;
-	}
-
-	function Action() {
-		this.checkpoint = () => { window.opera.Action = this; };
-		this.print = () => { console.log(this); };
-	};
-
-	function Resource() {
-		this.getActions = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/resources/${this.id}/actions`, (data) => {
-					let result = [];
-					data.forEach((content) => {
-						if (content.id in window.opera.resourceActions) {
-							content.region = this.region;
-							content.displayName = window.opera.resourceActions[content.id];
-							result.push(Object.assign(new Action(), content));	
-						} else {
-							console.warn("could not support action", content);
-						}
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
-
-		this.checkpoint = () => { window.opera.Resource = this; };
-		this.print = () => { console.log(this); };
-	};
-
-	function Deployment() {
-		this.getResources = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/deployments/${this.id}/resources`, (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this.region;
-						result.push(Object.assign(new Resource(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
-
-		this.checkpoint = () => { window.opera.Deployment = this; };
-		this.print = () => { console.log(this); };
-	};
-
-	function RequestForm() {
-		this.checkpoint = () => { window.opera.ResourceForm = this; };
-		this.print = () => { console.log(this); };
-	};
-
-	function Catalog() {
-		this.getRequestForm = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				if (this.schema) {
-					resultHandler(Object.assign(new RequestForm(), {
-						catalog: this,
-						schema: this.schema,
-						form: this.form
-					}));
-				} else {
-					this.region.rest.get(`/catalog/api/items/${this.id}/versions`, (versions) => {
-						if (versions.content.length > 0) {
-							let lastVersionId = versions.content[0].id
-							this.region.rest.get(`/catalog/api/items/${this.id}/versions/${lastVersionId}`, (detail) => {
-								this.schema = detail.schema;
-								this.formId = detail.formId;
-								if (this.formId) {
-									this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema, (form) => {
-										this.form = form.model;
-										resultHandler(Object.assign(new RequestForm(), {
-											catalog: this,
-											schema: this.schema,
-											form: this.form
-										}));
-									}, errorHandler);
-								} else {
-									this.form = null;
-									resultHandler(Object.assign(new RequestForm(), {
-										catalog: this,
-										schema: this.schema,
-										form: this.form
-									}));
-								}
-							});
-						} else {
-							this.region.rest.get(`/catalog/api/items/${this.id}`, (detail) => {
-								this.schema = detail.schema;
-								this.formId = detail.formId;
-								if (this.formId) {
-									this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}, (form) => {
-										this.form = form.model;
-										resultHandler(Object.assign(new RequestForm(), {
-											catalog: this,
-											schema: this.schema,
-											form: this.form
-										}));
-									}, () => {
-										this.form = null;
-										resultHandler(Object.assign(new RequestForm(), {
-											catalog: this,
-											schema: this.schema,
-											form: this.form
-										}));
-									});
-								} else {
-									this.form = null;
-									resultHandler(Object.assign(new RequestForm(), {
-										catalog: this,
-										schema: this.schema,
-										form: this.form
-									}));
-								}
-
-							}, errorHandler);
-						}
-					}, errorHandler);
-				}
-			}
-		};
-
-		this.checkpoint = () => { window.opera.Catalog = this; };
-		this.print = () => { console.log(this); };
-	};
-
-	function Project() {
-		this.getResources = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/resources?projects=${this.id}`, (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this.region;
-						result.push(Object.assign(new Resource(), content))
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
-
-		this.getDeployments = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/deployments?projects=${this.id}`, (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this.region;
-						result.push(Object.assign(new Deployment(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
-
-		this.getCatalogs = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/catalog/api/items?projects=${this.id}`, (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this.region;
-						result.push(Object.assign(new Catalog(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
-
-		this.checkpoint = () => { window.opera.Project = this; };
-		this.print = () => { console.log(this); };
-	};
-
-	function Region() {
-		this.getResources = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.rest.get('/deployment/api/resources', (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this;
-						result.push(Object.assign(new Resource(), content))
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
-
-		this.getDeployments = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.rest.get('/deployment/api/deployments', (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this;
-						result.push(Object.assign(new Deployment(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
-
-		this.getCatalogs = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.rest.get('/catalog/api/items', (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this;
-						result.push(Object.assign(new Catalog(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
-
-		this.getProjects = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.rest.get('/iaas/api/projects', (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this;
-						result.push(Object.assign(new Project(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
-		};
-
-		this.checkpoint = () => { window.opera.Region = this; };
-		this.print = () => { console.log(this); };
-
-		this.rest = {};
-
-		this.rest.get = (url, resultHandler, errorHandler) => {
-			fetch(`/aria/aa/${url}`, {
-				headers: {
-					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.regions[this.hostname].accessToken,
-					"AA-Host": this.hostname,
-					"Accept": "application/json; charset=utf-8"
-				}
-			}).then((res) => {
-				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
-				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
-			});
-		};
-
-		this.rest.post = (url, data, resultHandler, errorHandler) => {
-			fetch(`/aria/aa${url}`, {
-				method: "POST",
-				headers: {
-					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.regions[this.hostname].accessToken,
-					"AA-Host": this.hostname,
-					"Content-Type": "application/json; charset=utf-8",
-					"Accept": "application/json; charset=utf-8"
-				},
-				body: JSON.stringify(data)
-			}).then((res) => {
-				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
-				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
-			});
-		};
-
-		this.rest.put = (url, data, resultHandler, errorHandler) => {
-			fetch(`/aria/aa${url}`, {
-				method: "PUT",
-				headers: {
-					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.regions[this.hostname].accessToken,
-					"AA-Host": this.hostname,
-					"Content-Type": "application/json; charset=utf-8",
-					"Accept": "application/json; charset=utf-8"
-				},
-				body: JSON.stringify(data)
-			}).then((res) => {
-				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
-				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
-			});
-		};
-
-		this.rest.patch = (url, data, resultHandler, errorHandler) => {
-			fetch(`/aria/aa${url}`, {
-				method: "PATCH",
-				headers: {
-					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.regions[this.hostname].accessToken,
-					"AA-Host": this.hostname,
-					"Content-Type": "application/json; charset=utf-8",
-					"Accept": "application/json; charset=utf-8"
-				},
-				body: JSON.stringify(data)
-			}).then((res) => {
-				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
-				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
-			});
-		};
-
-		this.rest.delete = (url, resultHandler, errorHandler) => {
-			fetch(`/aria/aa${url}`, {
-				method: "DELETE",
-				headers: {
-					"Authorization": window.common.auth.bearerToken,
-					"AA-Auth": window.opera.regions[this.hostname].accessToken,
-					"AA-Host": this.hostname,
-					"Accept": "application/json; charset=utf-8"
-				}
-			}).then((res) => {
-				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
-				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
-			});
-		};
-	};
-
-	window.opera.getRegions = () => {
-		let result = [];
-		window.opera.regions.hostnames.forEach((hostname) => {
-			result.push(Object.assign(new Region(), window.opera.regions[hostname]));
-		});
-		return setArrayFunctions(result);
 	};
 
 	window.common.init(() => {
