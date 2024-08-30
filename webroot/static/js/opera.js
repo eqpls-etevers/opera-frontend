@@ -138,7 +138,7 @@ window.opera.login = (mainHandler) => {
 		this.getRequestForm = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				if (this.schema) {
-					if (data.form) {
+					if (this.form) {
 						resultHandler(Object.assign(new RequestForm(), {
 							catalog: this,
 							schema: this.schema,
@@ -155,13 +155,13 @@ window.opera.login = (mainHandler) => {
 					this.region.rest.get(`/catalog/api/items/${this.id}`, (data) => {
 						this.schema = data.schema;
 						if (data.formId) {
-							this.formId = data.formId;
-							this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&formId=${data.formId}`, {}, (data) => {
+							///form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=801bd6d5-8c95-450e-adec-caa7d0a3cf8f
+							this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${data.formId}`, {}, (data) => {
 								this.form = data.model;
 								resultHandler(Object.assign(new RequestForm(), {
 									catalog: this,
 									schema: this.schema,
-									form: data.model
+									form: this.form
 								}));
 							}, errorHandler);
 						} else {
