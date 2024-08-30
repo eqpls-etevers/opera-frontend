@@ -138,38 +138,67 @@ window.opera.login = (mainHandler) => {
 		this.getRequestForm = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				if (this.schema) {
-					if (this.form) {
-						resultHandler(Object.assign(new RequestForm(), {
-							catalog: this,
-							schema: this.schema,
-							form: this.form
-						}));
-					} else {
-						resultHandler(Object.assign(new RequestForm(), {
-							catalog: this,
-							schema: this.schema,
-							form: null
-						}));
-					}
+					resultHandler(Object.assign(new RequestForm(), {
+						catalog: this,
+						schema: this.schema,
+						form: this.form
+					}));
 				} else {
-					this.region.rest.get(`/catalog/api/items/${this.id}`, (data) => {
-						this.schema = data.schema;
-						if (data.formId) {
-							///form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=801bd6d5-8c95-450e-adec-caa7d0a3cf8f
-							this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${data.formId}`, {}, (data) => {
-								this.form = data.model;
-								resultHandler(Object.assign(new RequestForm(), {
-									catalog: this,
-									schema: this.schema,
-									form: this.form
-								}));
-							}, errorHandler);
+					this.region.rest.get(`/catalog/api/items/${this.id}/versions`, (versions) => {
+						if (versions.content.length > 0) {
+							let lastVersionId = versions.content[0].id
+							this.region.rest.get(`/catalog/api/items/${this.id}/versions/${lastVersionId}`, (detail) => {
+								this.schema = detail.schema;
+								this.formId = detail.formId;
+								if (this.formId) {
+									///form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=801bd6d5-8c95-450e-adec-caa7d0a3cf8f&projectId=&resourceId=&deploymentId=&sourceType=com.vmw.blueprint.version&sourceId=d29bea64-9765-3126-bfd7-2ef23f5f88e9%2F2
+									this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema, (form) => {
+										this.form = form.model;
+										resultHandler(Object.assign(new RequestForm(), {
+											catalog: this,
+											schema: this.schema,
+											form: this.form
+										}));
+									}, errorHandler);
+								} else {
+									this.form = null;
+									resultHandler(Object.assign(new RequestForm(), {
+										catalog: this,
+										schema: this.schema,
+										form: this.form
+									}));
+								}
+							});
 						} else {
-							resultHandler(Object.assign(new RequestForm(), {
-								catalog: this,
-								schema: this.schema,
-								form: null
-							}));
+							this.region.rest.get(`/catalog/api/items/${this.id}`, (detail) => {
+								this.schema = detail.schema;
+								this.formId = detail.formId;
+								if (this.formId) {
+									this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}, (form) => {
+										this.form = form.model;
+										resultHandler(Object.assign(new RequestForm(), {
+											catalog: this,
+											schema: this.schema,
+											form: this.form
+										}));
+									}, () => {
+										this.form = null;
+										resultHandler(Object.assign(new RequestForm(), {
+											catalog: this,
+											schema: this.schema,
+											form: this.form
+										}));
+									});
+								} else {
+									this.form = null;
+									resultHandler(Object.assign(new RequestForm(), {
+										catalog: this,
+										schema: this.schema,
+										form: this.form
+									}));
+								}
+
+							}, errorHandler);
 						}
 					}, errorHandler);
 				}
