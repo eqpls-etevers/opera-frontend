@@ -18,7 +18,10 @@ function main() {
 
 	let projects = regions[0].getProjects();
 	console.log(projects);
-	projects.print();
+	projects.then((projects) => {
+		projects.print();	
+	});
+	
 
 	/*
 	regions.print();
