@@ -119,7 +119,7 @@ window.opera.login = (mainHandler) => {
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
 			if (type) {
-				if (type in window.opera.resourceType) { query.push(`resourceType=${window.opera.resourceType[type]}`); }
+				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
 				else { throw `"${type}" is not support type option`; }
 			}
 			if (tag) { query.push(`tags=${tag}`); }
