@@ -97,7 +97,7 @@ window.opera.login = (mainHandler) => {
 			}
 			if (query.length > 0) { query = `?${query.join("&")}`; }
 			else { query = ""; }
-			this.rest.get(`/deployment/api/deployments${query}`).then((data) => {
+			return this.rest.get(`/deployment/api/deployments${query}`).then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this;
