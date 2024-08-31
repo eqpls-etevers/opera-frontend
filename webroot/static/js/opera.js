@@ -2,6 +2,10 @@
 
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
+	
+	window.opera.resourceType = {
+		"VM": ""
+	};
 
 	// only support action in list
 	window.opera.resourceActions = {
@@ -108,8 +112,16 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get resource list in region
-		this.getResources = () => {
-			this.rest.get('/deployment/api/resources').then((data) => {
+		this.getResources = (search, type, tags, orderBy, order) => {
+			let query = [];
+			if (search) { query.push(`search=${search}`); }
+			if (orderBy && order) {
+				if (order == "asc" || order == "desc") { query.push(`sort=${orderBy},${order}`); }
+				else { throw `order must be "asc" or "desc"`; }
+			}
+			if (query.length > 0) { query = `?${query.join("&")}`; }
+			else { query = ""; }
+			return this.rest.get(`/deployment/api/resources${query}`).then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this;
