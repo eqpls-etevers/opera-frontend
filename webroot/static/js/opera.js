@@ -76,45 +76,47 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get catalog list in region
-		this.getCatalogs = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.rest.get('/catalog/api/items', (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this;
-						result.push(Object.assign(new Catalog(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
+		this.getCatalogs = () => {
+			return this.rest.get('/catalog/api/items').then((data) => {
+				let result = [];
+				data.content.forEach((content) => {
+					content.region = this;
+					result.push(Object.assign(new Catalog(), content));
+				});
+				return setArrayFunctions(result);
+			});
 		};
 
 		// get deployment list in region
-		this.getDeployments = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.rest.get('/deployment/api/deployments', (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this;
-						result.push(Object.assign(new Deployment(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
+		this.getDeployments = (search, orderBy, order) => {
+			let query = [];
+			if (search) { query.push(`search=${search}`); }
+			if (orderBy && order) {
+				if (order == "asc" || order == "desc") { query.push(`sort=${orderBy},${order}`); }
+				else { throw `order must be "asc" or "desc"`; }
 			}
+			if (query.length > 0) { query = `?${query.join("&")}`; }
+			else { query = ""; }
+			this.rest.get(`/deployment/api/deployments${query}`).then((data) => {
+				let result = [];
+				data.content.forEach((content) => {
+					content.region = this;
+					result.push(Object.assign(new Deployment(), content));
+				});
+				return setArrayFunctions(result);
+			});
 		};
 
 		// get resource list in region
-		this.getResources = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.rest.get('/deployment/api/resources', (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this;
-						result.push(Object.assign(new Resource(), content))
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
+		this.getResources = () => {
+			this.rest.get('/deployment/api/resources').then((data) => {
+				let result = [];
+				data.content.forEach((content) => {
+					content.region = this;
+					result.push(Object.assign(new Resource(), content))
+				});
+				return setArrayFunctions(result);
+			});
 		};
 
 		// register current region to "window.opera.Region" property

@@ -15,12 +15,17 @@ function main() {
 	});
 
 	let regions = window.opera.getRegions();
+	let region = regions[0];
 
-	let projects = regions[0].getProjects();
-	console.log(projects);
-	projects.then((projects) => {
-		projects.print();	
+	region.getProjects().then((projects) => {
+		projects.print();
 	});
+	
+	region.getDeployments().then((deployments) => {
+		deployments.print();
+	});
+	
+	
 	
 
 	/*
