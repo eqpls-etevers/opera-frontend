@@ -3,8 +3,11 @@
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 	
+	// searchable resource type
 	window.opera.resourceType = {
-		"VM": ""
+		"vm": "Cloud.vSphere.Machine",
+		"disk": "Cloud.vSphere.Disk",
+		"network": "Cloud.Network",
 	};
 
 	// only support action in list
@@ -112,9 +115,14 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get resource list in region
-		this.getResources = (search, type, tags, orderBy, order) => {
+		this.getResources = (search, type, tag, orderBy, order) => {
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
+			if (type) {
+				if (type in window.opera.resourceType) { query.push(`resourceType=${window.opera.resourceType[type]}`); }
+				else { throw `"${type}" is not support type option`; }
+			}
+			if (tag) { query.push(`tags=${tag}`); }
 			if (orderBy && order) {
 				if (order == "asc" || order == "desc") { query.push(`sort=${orderBy},${order}`); }
 				else { throw `order must be "asc" or "desc"`; }
