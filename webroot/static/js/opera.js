@@ -64,17 +64,15 @@ window.opera.login = (mainHandler) => {
 	function Region() {
 
 		// get project list in region
-		this.getProjects = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.rest.get('/iaas/api/projects', (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this;
-						result.push(Object.assign(new Project(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
+		this.getProjects = async () => {
+			this.rest.get('/iaas/api/projects').then((data) => {
+				let result = [];
+				data.content.forEach((content) => {
+					content.region = this;
+					result.push(Object.assign(new Project(), content));
+				});
+				return setArrayFunctions(result);
+			});
 		};
 
 		// get catalog list in region
@@ -127,8 +125,8 @@ window.opera.login = (mainHandler) => {
 
 		// internal methods
 		this.rest = {};
-		this.rest.get = (url, resultHandler, errorHandler) => {
-			fetch(`/aria/aa/${url}`, {
+		this.rest.get = async (url) => {
+			return fetch(`/aria/aa/${url}`, {
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
 					"AA-Auth": window.opera.regions[this.hostname].accessToken,
@@ -137,14 +135,11 @@ window.opera.login = (mainHandler) => {
 				}
 			}).then((res) => {
 				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
 				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
 			});
 		};
-		this.rest.post = (url, data, resultHandler, errorHandler) => {
-			fetch(`/aria/aa${url}`, {
+		this.rest.post = async (url, data) => {
+			return fetch(`/aria/aa${url}`, {
 				method: "POST",
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
@@ -156,14 +151,11 @@ window.opera.login = (mainHandler) => {
 				body: JSON.stringify(data)
 			}).then((res) => {
 				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
 				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
 			});
 		};
-		this.rest.put = (url, data, resultHandler, errorHandler) => {
-			fetch(`/aria/aa${url}`, {
+		this.rest.put = async (url, data) => {
+			return fetch(`/aria/aa${url}`, {
 				method: "PUT",
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
@@ -175,14 +167,11 @@ window.opera.login = (mainHandler) => {
 				body: JSON.stringify(data)
 			}).then((res) => {
 				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
 				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
 			});
 		};
-		this.rest.patch = (url, data, resultHandler, errorHandler) => {
-			fetch(`/aria/aa${url}`, {
+		this.rest.patch = async (url, data) => {
+			return fetch(`/aria/aa${url}`, {
 				method: "PATCH",
 				headers: {
 					"Authorization": window.common.auth.bearerToken,
@@ -196,11 +185,9 @@ window.opera.login = (mainHandler) => {
 				if (res.ok) { return res.json(); }
 				if (errorHandler) { errorHandler(res); }
 				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
 			});
 		};
-		this.rest.delete = (url, resultHandler, errorHandler) => {
+		this.rest.delete = async (url) => {
 			fetch(`/aria/aa${url}`, {
 				method: "DELETE",
 				headers: {
@@ -211,10 +198,7 @@ window.opera.login = (mainHandler) => {
 				}
 			}).then((res) => {
 				if (res.ok) { return res.json(); }
-				if (errorHandler) { errorHandler(res); }
 				throw res
-			}).then((data) => {
-				if (resultHandler) { resultHandler(data); }
 			});
 		};
 	};

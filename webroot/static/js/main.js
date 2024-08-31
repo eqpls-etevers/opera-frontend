@@ -15,6 +15,11 @@ function main() {
 	});
 
 	let regions = window.opera.getRegions();
+
+	let projects = regions[0].getProjects();
+	projects.print();
+
+	/*
 	regions.print();
 	regions.forEach((region) => {
 		region.getProjects((projects) => {
@@ -45,6 +50,7 @@ function main() {
 			});
 		});
 	});
+	*/
 };
 
 window.opera.login(main);
