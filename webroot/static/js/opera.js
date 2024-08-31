@@ -3,6 +3,52 @@
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 
+	// only support action in list
+	window.opera.resourceActions = {
+
+		// VM
+		"Cloud.vSphere.Machine.Update.Tags": "태그 수정",
+
+		"Cloud.vSphere.Machine.PowerOn": "전원 켬",
+		"Cloud.vSphere.Machine.PowerOff": "전원 끔",
+		"Cloud.vSphere.Machine.Reboot": "재시작",
+		"Cloud.vSphere.Machine.Suspend": "일시 정지",
+		"Cloud.vSphere.Machine.Shutdown": "운영체제 종료",
+
+		"Cloud.vSphere.Machine.Reset": "초기화",
+		"Cloud.vSphere.Machine.Rebuild": "재구성",
+		"Cloud.vSphere.Machine.Delete": "삭제",
+
+		"Cloud.vSphere.Machine.Resize": "성능 조정",
+		"Cloud.vSphere.Machine.Unregister": "관리 해지",
+
+		"Cloud.vSphere.Machine.ApplySaltConfiguration": "솔트스택 설정 적용",
+		"Cloud.vSphere.Machine.AttachSaltStackResource": "솔트스택 자원 연결",
+
+		"Cloud.vSphere.Machine.Add.Disk": "디스크 추가",
+		"Cloud.vSphere.Machine.Remove.Disk": "디스크 삭제",
+		"Cloud.vSphere.Machine.Resize.Compute.Disk": "추가 디스크 크기 조정",
+		"Cloud.vSphere.Machine.Compute.Disk.Resize": "부트 디스크 크기 조정",
+
+		"Cloud.vSphere.Machine.Snapshot.Create": "스냅샷 생성",
+		"Cloud.vSphere.Machine.Snapshot.Delete": "스냅샷 삭제",
+		"Cloud.vSphere.Machine.Snapshot.Revert": "스냅샷 적용",
+
+		"Cloud.vSphere.Machine.Remote.PrivateKey": "개인 키 다운로드",
+		"Cloud.vSphere.Machine.Remote.Console": "원격 콘솔 연결",
+
+		"Cloud.vSphere.Machine.Change.SecurityGroup": "보안 그룹 변경",
+
+		// Disk
+		"Cloud.vSphere.Disk.Disk.Change.Display.Name": "이름 변경",
+		"Cloud.vSphere.Disk.Disk.Resize": "크기 조정",
+		"Cloud.vSphere.Disk.Update.Tags": "태그 수정",
+
+		// Security Group
+		"Cloud.SecurityGroup.Delete": "삭제",
+		"Cloud.SecurityGroup.Reconfigure.SecurityGroup": "재설정",
+	};
+
 	// function of getting region list is only sync type
 	window.opera.getRegions = () => {
 		let result = [];
@@ -220,15 +266,15 @@ window.opera.login = (mainHandler) => {
 
 		// register current project to "window.opera.Project" property
 		this.checkpoint = () => { window.opera.Project = this; };
-		
+
 		// print to console
 		this.print = () => { console.log(this); };
 	};
 
 	// Catalog
 	function Catalog() {
-		
-		// get request form descriptor of current catalog
+
+		// get request form of catalog
 		this.getRequestForm = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				if (this.schema) {
@@ -306,14 +352,14 @@ window.opera.login = (mainHandler) => {
 
 		// register current catalog to "window.opera.Catalog" property
 		this.checkpoint = () => { window.opera.Catalog = this; };
-		
+
 		// print to console
 		this.print = () => { console.log(this); };
 	};
 
 	// Request Form
 	function RequestForm() {
-		
+
 		// submit request data
 		this.submit = (inputProperties, resultHandler, errorHandler) => {
 			switch (this.type) {
@@ -331,19 +377,21 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
-		// get html data which is drawn by this.schem & this.form information
+		// get html data which is drawn by this.schema & this.form information
 		this.draw = () => {
 			return "<div>draw is not implemented now</div>";
 		};
 
 		// register current request form to "window.opera.RequestForm" property
 		this.checkpoint = () => { window.opera.RequestForm = this; };
-		
+
 		// print to console
 		this.print = () => { console.log(this); };
 	};
 
 	function Deployment() {
+
+		// get resource list in deployment
 		this.getResources = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/deployment/api/deployments/${this.id}/resources`, (data) => {
@@ -357,11 +405,16 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// register current deployment to "window.opera.Deployment" property
 		this.checkpoint = () => { window.opera.Deployment = this; };
+
+		// print to console
 		this.print = () => { console.log(this); };
 	};
 
 	function Resource() {
+
+		// get project of resource
 		this.getProject = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				if (this.properties.project) {
@@ -375,6 +428,7 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// get deployment of resource
 		this.getDeployment = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/deployment/api/resources/${this.id}}?expand=deployment`, (data) => {
@@ -390,6 +444,7 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// get available actions of resource
 		this.getActions = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/deployment/api/resources/${this.id}/actions`, (data) => {
@@ -409,11 +464,16 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// register current resource to "window.opera.Resource" property
 		this.checkpoint = () => { window.opera.Resource = this; };
+
+		// print to console
 		this.print = () => { console.log(this); };
 	};
 
 	function Action() {
+
+		// get request form of action
 		this.getRequestForm = (resultHandler, errorHandler) => {
 			if (resultHandler) {
 				this.region.rest.get(`/deployment/api/resources/${this.resource.id}/actions/${this.id}`, (data) => {
@@ -427,55 +487,14 @@ window.opera.login = (mainHandler) => {
 			}
 		};
 
+		// register current action to "window.opera.Action" property
 		this.checkpoint = () => { window.opera.Action = this; };
+
+		// print to console
 		this.print = () => { console.log(this); };
 	};
 
-	window.opera.resourceActions = {
-
-		// VM
-		"Cloud.vSphere.Machine.Update.Tags": "태그 수정",
-
-		"Cloud.vSphere.Machine.PowerOn": "전원 켬",
-		"Cloud.vSphere.Machine.PowerOff": "전원 끔",
-		"Cloud.vSphere.Machine.Reboot": "재시작",
-		"Cloud.vSphere.Machine.Suspend": "일시 정지",
-		"Cloud.vSphere.Machine.Shutdown": "운영체제 종료",
-
-		"Cloud.vSphere.Machine.Reset": "초기화",
-		"Cloud.vSphere.Machine.Rebuild": "재구성",
-		"Cloud.vSphere.Machine.Delete": "삭제",
-
-		"Cloud.vSphere.Machine.Resize": "성능 조정",
-		"Cloud.vSphere.Machine.Unregister": "관리 해지",
-
-		"Cloud.vSphere.Machine.ApplySaltConfiguration": "솔트스택 설정 적용",
-		"Cloud.vSphere.Machine.AttachSaltStackResource": "솔트스택 자원 연결",
-
-		"Cloud.vSphere.Machine.Add.Disk": "디스크 추가",
-		"Cloud.vSphere.Machine.Remove.Disk": "디스크 삭제",
-		"Cloud.vSphere.Machine.Resize.Compute.Disk": "추가 디스크 크기 조정",
-		"Cloud.vSphere.Machine.Compute.Disk.Resize": "부트 디스크 크기 조정",
-
-		"Cloud.vSphere.Machine.Snapshot.Create": "스냅샷 생성",
-		"Cloud.vSphere.Machine.Snapshot.Delete": "스냅샷 삭제",
-		"Cloud.vSphere.Machine.Snapshot.Revert": "스냅샷 적용",
-
-		"Cloud.vSphere.Machine.Remote.PrivateKey": "개인 키 다운로드",
-		"Cloud.vSphere.Machine.Remote.Console": "원격 콘솔 연결",
-
-		"Cloud.vSphere.Machine.Change.SecurityGroup": "보안 그룹 변경",
-
-		// Disk
-		"Cloud.vSphere.Disk.Disk.Change.Display.Name": "이름 변경",
-		"Cloud.vSphere.Disk.Disk.Resize": "크기 조정",
-		"Cloud.vSphere.Disk.Update.Tags": "태그 수정",
-
-		// Security Group
-		"Cloud.SecurityGroup.Delete": "삭제",
-		"Cloud.SecurityGroup.Reconfigure.SecurityGroup": "재설정",
-	};
-
+	// abstract of aria object array
 	function setArrayFunctions(arr) {
 		arr.readById = (id) => {
 			arr.forEach((content) => { if (id == content.id) { return content; } });
@@ -529,6 +548,7 @@ window.opera.login = (mainHandler) => {
 		return arr;
 	};
 
+	// internal initialize for authorization
 	window.common.init(() => {
 		window.common.auth.loginMiddleWare = (loginProcess) => {
 			let endpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
