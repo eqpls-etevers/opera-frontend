@@ -17,6 +17,7 @@ function main() {
 	let regions = window.opera.getRegions();
 
 	let projects = regions[0].getProjects();
+	console.log(projects);
 	projects.print();
 
 	/*
