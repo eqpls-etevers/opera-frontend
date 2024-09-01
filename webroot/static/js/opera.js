@@ -551,7 +551,7 @@ window.opera.login = (mainHandler) => {
 		};
 		arr.print = () => {
 			if (arr.length > 0) {
-				console.log(`${arr[0].Object.constructor.name}s`, arr);
+				console.log(`${arr[0].constructor.name}s`, arr);
 			} else {
 				console.log("empty array");
 			}
