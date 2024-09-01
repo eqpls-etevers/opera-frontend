@@ -30,8 +30,9 @@ function main() {
 			project.getCatalogs().then((catalogs) => {
 				catalogs.print();
 				catalogs.forEach((catalog) => {
-					let form = catalog.getRequestForm();
-					console.log(form);
+					catalog.getRequestForm().then((form) => {
+						console.log(form);
+					});
 				});
 			});
 			/*
