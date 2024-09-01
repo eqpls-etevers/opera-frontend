@@ -6,24 +6,17 @@ async function main() {
 	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
 	document.getElementById("vidm-access-token").innerText = window.opera.vidm.accessToken;
 
-	/*
-	window.opera.regions.hostnames.forEach((hostname) => {
-		let region = window.opera.regions[hostname];
-		let dom = document.createElement('p');
-		dom.innerText = `${hostname}: ${region.accessToken}`;
-		regionsDom.appendChild(dom);
-	});
-	*/
-
 	let regionsDom = document.getElementById("regions-access-tokens");
+
 	let regions = await window.opera.getRegions(); // get region list by "await" async code format
-	regions.forEach(async (region) => {
+	for (let i = 0; i < regions.len(); i++) {
+		let region = regions[i];
 		let dom = document.createElement('p');
 		dom.innerText = `${region.hostname}: ${region.accessToken}`;
 		regionsDom.appendChild(dom);
-	});
+	}
 
-	let region = regions[0]; // get first region
+	let region = regions[0]; // set first region
 
 	let projects = await region.getProjects(); // get project list by "await" async code format
 	projects.print(); // print project list to console
