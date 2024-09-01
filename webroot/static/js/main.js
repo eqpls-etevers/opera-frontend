@@ -17,9 +17,15 @@ async function main() {
 	let regions = await window.opera.getRegions();
 	let region = regions[0];
 
-	region.getProjects().then((projects) => { projects.print(); });
+	//region.getProjects().then((projects) => { projects.print(); });
+
 	let projects = await region.getProjects();
 	projects.print();
+	for (let i=0; i<projects.lenth; i++) {
+		let project = projects[i];
+		project.print();
+	}
+
 
 	/*
 	region.getCatalogs().then((catalogs) => { catalogs.print(); });
