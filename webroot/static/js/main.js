@@ -24,6 +24,20 @@ async function main() {
 	projects.forEach(async (project) => {
 		let catalogs = await project.getCatalogs();
 		catalogs.print();
+		catalogs.forEach(async (catalog) => {
+			let form = await catalog.getRequestForm();
+			form.print();
+		});
+		let deployments = await project.getDeployments();
+		deployments.print();
+		deployments.forEach(async (deployment) => {
+			let resources = await deployment.getResources();
+			resources.print();
+			resources.forEach(async (resource) => {
+				let form = await resource.getRequestFrom();
+				form.print();
+			});
+		});
 	});
 
 
