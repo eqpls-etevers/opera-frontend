@@ -62,7 +62,7 @@ window.opera.login = (mainHandler) => {
 		window.opera.regions.hostnames.forEach((hostname) => {
 			result.push(Object.assign(new Region(), window.opera.regions[hostname]));
 		});
-		return setArrayFunctions(result);
+		return setArrayFunctions(result, Region);
 	};
 
 	// all functions & objects are async types which must be required result handler (function type) in params
@@ -78,7 +78,7 @@ window.opera.login = (mainHandler) => {
 					content.region = this;
 					result.push(Object.assign(new Project(), content));
 				});
-				return setArrayFunctions(result);
+				return setArrayFunctions(result, Project);
 			});
 		};
 
@@ -90,7 +90,7 @@ window.opera.login = (mainHandler) => {
 					content.region = this;
 					result.push(Object.assign(new Catalog(), content));
 				});
-				return setArrayFunctions(result);
+				return setArrayFunctions(result, Catalog);
 			});
 		};
 
@@ -112,7 +112,7 @@ window.opera.login = (mainHandler) => {
 					content.region = this;
 					result.push(Object.assign(new Deployment(), content));
 				});
-				return setArrayFunctions(result);
+				return setArrayFunctions(result, Deployment);
 			});
 		};
 
@@ -139,7 +139,7 @@ window.opera.login = (mainHandler) => {
 					content.region = this;
 					result.push(Object.assign(new Resource(), content))
 				});
-				return setArrayFunctions(result);
+				return setArrayFunctions(result, Resource);
 			});
 		};
 
@@ -240,7 +240,7 @@ window.opera.login = (mainHandler) => {
 					content.region = this.region;
 					result.push(Object.assign(new Catalog(), content));
 				});
-				return setArrayFunctions(result);
+				return setArrayFunctions(result, Catalog);
 			});
 		};
 
@@ -262,7 +262,7 @@ window.opera.login = (mainHandler) => {
 					content.region = this.region;
 					result.push(Object.assign(new Deployment(), content));
 				});
-				return setArrayFunctions(result);
+				return setArrayFunctions(result, Deployment);
 			});
 		};
 
@@ -289,7 +289,7 @@ window.opera.login = (mainHandler) => {
 					content.region = this.region;
 					result.push(Object.assign(new Resource(), content))
 				});
-				return setArrayFunctions(result);
+				return setArrayFunctions(result, Resource);
 			});
 		};
 
@@ -428,7 +428,7 @@ window.opera.login = (mainHandler) => {
 					content.region = this.region;
 					result.push(Object.assign(new Resource(), content))
 				});
-				return setArrayFunctions(result);
+				return setArrayFunctions(result, Resource);
 			});
 		};
 
@@ -467,7 +467,7 @@ window.opera.login = (mainHandler) => {
 						result.push(Object.assign(new Action(), content));
 					} else { console.warn("could not support action", content); }
 				});
-				return setArrayFunctions(result);
+				return setArrayFunctions(result, Action);
 			});
 		};
 
@@ -500,7 +500,7 @@ window.opera.login = (mainHandler) => {
 	};
 
 	// abstract of aria object array
-	function setArrayFunctions(arr) {
+	function setArrayFunctions(arr, obj) {
 		arr.readById = (id) => {
 			arr.forEach((content) => { if (id == content.id) { return content; } });
 			return None
@@ -551,11 +551,13 @@ window.opera.login = (mainHandler) => {
 		};
 		arr.print = () => {
 			if (arr.length > 0) {
-				console.log(`${arr[0].constructor.name}s`, arr);
+				console.log(`${arr.objname}s`, arr);
 			} else {
-				console.log("empty array");
+				console.log(`${arr.objname}s is empty array`);
 			}
 		};
+
+		arr.objname = obj.name;
 		return arr;
 	};
 
