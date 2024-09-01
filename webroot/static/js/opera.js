@@ -549,7 +549,13 @@ window.opera.login = (mainHandler) => {
 			}
 			return arr
 		};
-		arr.print = () => { console.log(arr); };
+		arr.print = () => {
+			if (arr.length > 0) {
+				console.log(`${typeof arr[0]}s`, arr);
+			} else {
+				console.log("empty array");
+			}
+		};
 		return arr;
 	};
 
