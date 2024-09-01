@@ -259,7 +259,7 @@ window.opera.login = (mainHandler) => {
 			return this.region.rest.get(`/deployment/api/deployments?projects=${this.id}${query}`).then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
-					content.region = this;
+					content.region = this.region;
 					result.push(Object.assign(new Deployment(), content));
 				});
 				return setArrayFunctions(result);
@@ -286,7 +286,7 @@ window.opera.login = (mainHandler) => {
 			return this.region.rest.get(`/deployment/api/resources?projects=${this.id}${query}`).then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
-					content.region = this;
+					content.region = this.region;
 					result.push(Object.assign(new Resource(), content))
 				});
 				return setArrayFunctions(result);
@@ -425,7 +425,7 @@ window.opera.login = (mainHandler) => {
 			return this.region.rest.get(`/deployment/api/deployments/${this.id}/resources${query}`).then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
-					content.region = this;
+					content.region = this.region;
 					result.push(Object.assign(new Resource(), content))
 				});
 				return setArrayFunctions(result);
