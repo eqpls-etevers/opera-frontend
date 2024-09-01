@@ -2,7 +2,7 @@
 
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
-	
+
 	// searchable resource type
 	window.opera.resourceType = {
 		"vm": "Cloud.vSphere.Machine",
@@ -95,12 +95,14 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get deployment list in region
-		this.getDeployments = (search, orderBy, order) => {
+		this.getDeployments = (search, sort) => {
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
-			if (orderBy && order) {
-				if (order == "asc" || order == "desc") { query.push(`sort=${orderBy},${order}`); }
-				else { throw `order must be "asc" or "desc"`; }
+			if (typeof sort == "list" & sort.length == 2) {
+				let field = sort[0];
+				let order = sort[1];
+				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
+				else { throw `"field" is required and "order" must be "asc" or "desc"`; }
 			}
 			if (query.length > 0) { query = `?${query.join("&")}`; }
 			else { query = ""; }
@@ -115,7 +117,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get resource list in region
-		this.getResources = (search, type, tag, orderBy, order) => {
+		this.getResources = (search, type, tag, sort) => {
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
 			if (type) {
@@ -123,9 +125,11 @@ window.opera.login = (mainHandler) => {
 				else { throw `"${type}" is not support type option`; }
 			}
 			if (tag) { query.push(`tags=${tag}`); }
-			if (orderBy && order) {
-				if (order == "asc" || order == "desc") { query.push(`sort=${orderBy},${order}`); }
-				else { throw `order must be "asc" or "desc"`; }
+			if (typeof sort == "list" & sort.length == 2) {
+				let field = sort[0];
+				let order = sort[1];
+				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
+				else { throw `"field" is required and "order" must be "asc" or "desc"`; }
 			}
 			if (query.length > 0) { query = `?${query.join("&")}`; }
 			else { query = ""; }
@@ -229,45 +233,64 @@ window.opera.login = (mainHandler) => {
 	function Project() {
 
 		// get catalog list in project
-		this.getCatalogs = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/catalog/api/items?projects=${this.id}`, (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this.region;
-						result.push(Object.assign(new Catalog(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
+		this.getCatalogs = () => {
+			return this.rest.get(`/catalog/api/items?projects=${this.id}`).then((data) => {
+				let result = [];
+				data.content.forEach((content) => {
+					content.region = this;
+					result.push(Object.assign(new Catalog(), content));
+				});
+				return setArrayFunctions(result);
+			});
 		};
 
 		// get deployment list in project
-		this.getDeployments = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/deployments?projects=${this.id}`, (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this.region;
-						result.push(Object.assign(new Deployment(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
+		this.getDeployments = (search, sort) => {
+			let query = [];
+			if (search) { query.push(`search=${search}`); }
+			if (typeof sort == "list" & sort.length == 2) {
+				let field = sort[0];
+				let order = sort[1];
+				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
+				else { throw `"field" is required and "order" must be "asc" or "desc"`; }
 			}
+			if (query.length > 0) { query = `&${query.join("&")}`; }
+			else { query = ""; }
+			return this.rest.get(`/deployment/api/deployments?projects=${this.id}${query}`).then((data) => {
+				let result = [];
+				data.content.forEach((content) => {
+					content.region = this;
+					result.push(Object.assign(new Deployment(), content));
+				});
+				return setArrayFunctions(result);
+			});
 		};
 
 		// get resource list in project
-		this.getResources = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/resources?projects=${this.id}`, (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this.region;
-						result.push(Object.assign(new Resource(), content))
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
+		this.getResources = (search, type, tag, sort) => {
+			let query = [];
+			if (search) { query.push(`search=${search}`); }
+			if (type) {
+				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
+				else { throw `"${type}" is not support type option`; }
 			}
+			if (tag) { query.push(`tags=${tag}`); }
+			if (typeof sort == "list" & sort.length == 2) {
+				let field = sort[0];
+				let order = sort[1];
+				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
+				else { throw `"field" is required and "order" must be "asc" or "desc"`; }
+			}
+			if (query.length > 0) { query = `&${query.join("&")}`; }
+			else { query = ""; }
+			return this.rest.get(`/deployment/api/resources?projects=${this.id}${query}`).then((data) => {
+				let result = [];
+				data.content.forEach((content) => {
+					content.region = this;
+					result.push(Object.assign(new Resource(), content))
+				});
+				return setArrayFunctions(result);
+			});
 		};
 
 		// register current project to "window.opera.Project" property
@@ -281,79 +304,69 @@ window.opera.login = (mainHandler) => {
 	function Catalog() {
 
 		// get request form of catalog
-		this.getRequestForm = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				if (this.schema) {
-					resultHandler(Object.assign(new RequestForm(), {
-						type: "catalog",
-						caller: this,
-						schema: this.schema,
-						form: this.form
-					}));
-				} else {
-					this.region.rest.get(`/catalog/api/items/${this.id}/versions`, (versions) => {
-						if (versions.content.length > 0) {
-							let lastVersionId = versions.content[0].id
-							this.region.rest.get(`/catalog/api/items/${this.id}/versions/${lastVersionId}`, (detail) => {
-								this.schema = detail.schema;
-								this.formId = detail.formId;
-								if (this.formId) {
-									this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema, (form) => {
-										this.form = form.model;
-										resultHandler(Object.assign(new RequestForm(), {
-											type: "catalog",
-											caller: this,
-											schema: this.schema,
-											form: this.form
-										}));
-									}, errorHandler);
-								} else {
-									this.form = null;
-									resultHandler(Object.assign(new RequestForm(), {
-										type: "catalog",
-										caller: this,
-										schema: this.schema,
-										form: this.form
-									}));
-								}
+		this.getRequestForm = () => {
+			return this.region.rest.get(`/catalog/api/items/${this.id}/versions`).then((versions) => {
+				if (versions.content.length > 0) {
+					let lastVersionId = versions.content[0].id
+					this.region.rest.get(`/catalog/api/items/${this.id}/versions/${lastVersionId}`).then((detail) => {
+						this.schema = detail.schema;
+						this.formId = detail.formId;
+						if (this.formId) {
+							this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema).then((form) => {
+								this.form = form.model;
+								return Object.assign(new RequestForm(), {
+									type: "catalog",
+									caller: this,
+									schema: this.schema,
+									form: this.form
+								});
 							});
 						} else {
-							this.region.rest.get(`/catalog/api/items/${this.id}`, (detail) => {
-								this.schema = detail.schema;
-								this.formId = detail.formId;
-								if (this.formId) {
-									this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}, (form) => {
-										this.form = form.model;
-										resultHandler(Object.assign(new RequestForm(), {
-											type: "catalog",
-											caller: this,
-											schema: this.schema,
-											form: this.form
-										}));
-									}, () => {
-										this.form = null;
-										resultHandler(Object.assign(new RequestForm(), {
-											type: "catalog",
-											caller: this,
-											schema: this.schema,
-											form: this.form
-										}));
-									});
-								} else {
-									this.form = null;
-									resultHandler(Object.assign(new RequestForm(), {
+							this.form = null;
+							return Object.assign(new RequestForm(), {
+								type: "catalog",
+								caller: this,
+								schema: this.schema,
+								form: this.form
+							});
+						}
+					});
+				} else {
+					this.region.rest.get(`/catalog/api/items/${this.id}`).then((detail) => {
+						this.schema = detail.schema;
+						this.formId = detail.formId;
+						if (this.formId) {
+							try {
+								this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}).then((form) => {
+									this.form = form.model;
+									return Object.assign(new RequestForm(), {
 										type: "catalog",
 										caller: this,
 										schema: this.schema,
 										form: this.form
-									}));
-								}
-
-							}, errorHandler);
+									});
+								});
+							} catch (e) {
+								this.form = null;
+								return Object.assign(new RequestForm(), {
+									type: "catalog",
+									caller: this,
+									schema: this.schema,
+									form: this.form
+								});
+							}
+						} else {
+							this.form = null;
+							return Object.assign(new RequestForm(), {
+								type: "catalog",
+								caller: this,
+								schema: this.schema,
+								form: this.form
+							});
 						}
-					}, errorHandler);
+					});
 				}
-			}
+			});
 		};
 
 		// register current catalog to "window.opera.Catalog" property
@@ -367,20 +380,15 @@ window.opera.login = (mainHandler) => {
 	function RequestForm() {
 
 		// submit request data
-		this.submit = (inputProperties, resultHandler, errorHandler) => {
+		this.submit = (inputProperties) => {
 			switch (this.type) {
 				case "catalog":
-					this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties, (data) => {
-						if (resultHandler) { resultHandler(data); };
-					}, errorHandler);
-					break;
+					return this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties).then((data) => { return data; });
 				case "action":
 					inputProperties.actionId = this.caller.id;
-					this.region.rest.post(`/deployment/api/resources/${this.caller.resource.id}/requests`, inputProperties, (data) => {
-						if (resultHandler) { resultHandler(data); };
-					}, errorHandler);
-					break;
+					return this.region.rest.post(`/deployment/api/resources/${this.caller.resource.id}/requests`, inputProperties).then((data) => { return data; });
 			}
+			throw "unsupport type request form";
 		};
 
 		// get html data which is drawn by this.schema & this.form information
@@ -397,18 +405,31 @@ window.opera.login = (mainHandler) => {
 
 	function Deployment() {
 
-		// get resource list in deployment
-		this.getResources = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/deployments/${this.id}/resources`, (data) => {
-					let result = [];
-					data.content.forEach((content) => {
-						content.region = this.region;
-						result.push(Object.assign(new Resource(), content));
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
+		// get resource list in project
+		this.getResources = (search, type, tag, sort) => {
+			let query = [];
+			if (search) { query.push(`search=${search}`); }
+			if (type) {
+				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
+				else { throw `"${type}" is not support type option`; }
 			}
+			if (tag) { query.push(`tags=${tag}`); }
+			if (typeof sort == "list" & sort.length == 2) {
+				let field = sort[0];
+				let order = sort[1];
+				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
+				else { throw `"field" is required and "order" must be "asc" or "desc"`; }
+			}
+			if (query.length > 0) { query = `&${query.join("&")}`; }
+			else { query = ""; }
+			return this.rest.get(`/deployment/api/deployments/${this.id}/resources${query}`).then((data) => {
+				let result = [];
+				data.content.forEach((content) => {
+					content.region = this;
+					result.push(Object.assign(new Resource(), content))
+				});
+				return setArrayFunctions(result);
+			});
 		};
 
 		// register current deployment to "window.opera.Deployment" property
@@ -421,53 +442,33 @@ window.opera.login = (mainHandler) => {
 	function Resource() {
 
 		// get project of resource
-		this.getProject = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				if (this.properties.project) {
-					this.region.rest.get(`/iaas/api/projects/${this.properties.project}`, (data) => {
-						resultHandler(Object.assign(new Project(), data));
-					}, errorHandler);
-				} else {
-					console.warn("could not get project: this resource may be out of project scopes");
-					if (errorHandler) { errorHandler(); }
-				}
-			}
+		this.getProject = () => {
+			if (this.properties.project) { return this.region.rest.get(`/iaas/api/projects/${this.properties.project}`).then((data) => { return Object.assign(new Project(), data); }); }
+			else { throw "could not get project: this resource may be out of project scopes"; }
 		};
 
 		// get deployment of resource
-		this.getDeployment = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/resources/${this.id}}?expand=deployment`, (data) => {
-					if (data.deployment) {
-						this.region.rest.get(`/deployment/api/deployments/${data.deployment.id}`, (data) => {
-							resultHandler(Object.assign(new Deployment(), data));
-						}, errorHandler);
-					} else {
-						console.warn("could not get deployment: this resource may be out of deployment scopes");
-						if (errorHandler) { errorHandler(); }
-					}
-				}, errorHandler);
-			}
+		this.getDeployment = () => {
+			return this.region.rest.get(`/deployment/api/resources/${this.id}}?expand=deployment`).then((data) => {
+				if (data.deployment) { return this.region.rest.get(`/deployment/api/deployments/${data.deployment.id}`).then((data) => { return Object.assign(new Deployment(), data); }); }
+				else { throw "could not get deployment: this resource may be out of deployment scopes"; }
+			});
 		};
 
 		// get available actions of resource
-		this.getActions = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/resources/${this.id}/actions`, (data) => {
-					let result = [];
-					data.forEach((content) => {
-						if (content.id in window.opera.resourceActions) {
-							content.region = this.region;
-							content.resource = this;
-							content.displayName = window.opera.resourceActions[content.id];
-							result.push(Object.assign(new Action(), content));
-						} else {
-							console.warn("could not support action", content);
-						}
-					});
-					resultHandler(setArrayFunctions(result));
-				}, errorHandler);
-			}
+		this.getActions = () => {
+			return this.region.rest.get(`/deployment/api/resources/${this.id}/actions`).then((data) => {
+				let result = [];
+				data.forEach((content) => {
+					if (content.id in window.opera.resourceActions) {
+						content.region = this.region;
+						content.resource = this;
+						content.displayName = window.opera.resourceActions[content.id];
+						result.push(Object.assign(new Action(), content));
+					} else { console.warn("could not support action", content); }
+				});
+				return setArrayFunctions(result);
+			});
 		};
 
 		// register current resource to "window.opera.Resource" property
@@ -480,17 +481,15 @@ window.opera.login = (mainHandler) => {
 	function Action() {
 
 		// get request form of action
-		this.getRequestForm = (resultHandler, errorHandler) => {
-			if (resultHandler) {
-				this.region.rest.get(`/deployment/api/resources/${this.resource.id}/actions/${this.id}`, (data) => {
-					resultHandler(Object.assign(new RequestForm(), {
-						type: "action",
-						caller: this,
-						schema: data.schema,
-						form: null
-					}));
-				}, errorHandler);
-			}
+		this.getRequestForm = () => {
+			return this.region.rest.get(`/deployment/api/resources/${this.resource.id}/actions/${this.id}`).then((data) => {
+				return Object.assign(new RequestForm(), {
+					type: "action",
+					caller: this,
+					schema: data.schema,
+					form: null
+				});
+			});
 		};
 
 		// register current action to "window.opera.Action" property

@@ -19,10 +19,29 @@ function main() {
 
 	// region.getProjects().then((projects) => { projects.print(); });
 	// region.getDeployments().then((deployments) => { deployments.print(); });
-	region.getResources().then((resources) => { resources.print(); });
-	
-	
-	
+	// region.getResources().then((resources) => { resources.print(); });
+
+	region.getProjects().then((projects) => {
+		projects.print();
+		projects.forEach((project) => {
+			project.getDeployments().then((deployments) => {
+				deployments.print();
+				deployments.forEach((deployment) => {
+					deployment.getResources().then((resources) => {
+						resources.print();
+						resources.forEach((resource) => {
+							resource.getActions().then((actions) => {
+								actions.print();
+							});
+						});
+					});
+				});
+			});
+		});
+	});
+
+
+
 
 	/*
 	regions.print();
