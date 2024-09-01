@@ -28,9 +28,11 @@ async function main() {
 			let form = await catalog.getRequestForm();
 			form.print();
 		});
+
 		let deployments = await project.getDeployments();
 		deployments.print();
-		deployments.forEach(async (deployment) => {
+		for (let i = 0; i < deployments.len(); i++) {
+			let deployment = deployments[i];
 			let resources = await deployment.getResources();
 			resources.print();
 			resources.forEach(async (resource) => {
@@ -41,7 +43,7 @@ async function main() {
 					form.print();
 				});
 			});
-		});
+		}
 	});
 
 
