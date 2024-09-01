@@ -17,7 +17,10 @@ function main() {
 	let regions = window.opera.getRegions();
 	let region = regions[0];
 
-	region.getProjects().then((projects) => { projects.print(); });
+	//region.getProjects().then((projects) => { projects.print(); });
+	let projects = await region.getProjects();
+	projects.print();
+
 	region.getCatalogs().then((catalogs) => { catalogs.print(); });
 	region.getDeployments().then((deployments) => { deployments.print(); });
 	region.getResources().then((resources) => { resources.print(); });

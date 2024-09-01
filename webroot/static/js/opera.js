@@ -505,22 +505,36 @@ window.opera.login = (mainHandler) => {
 
 	// abstract of aria object array
 	function setArrayFunctions(arr, obj) {
-		arr.readById = (id) => {
+
+		// check empty
+		arr.isEmpty = () => {
+			if (arr.length == 0) { return true; }
+			else { return false; }
+		};
+
+		// find one object by id
+		arr.findById = (id) => {
 			arr.forEach((content) => { if (id == content.id) { return content; } });
 			return None
 		};
+
+		// get list of name included
 		arr.searchByName = (name) => {
 			let result = [];
 			arr.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
-			return setArrayFunctions(result);
+			return setArrayFunctions(result, arr.obj);
 		};
+
+		// get list of match value at specific field
 		arr.searchByField = (field, value) => {
 			let result = [];
 			arr.forEach((content) => { if (value == content[field]) { result.push(content); } });
-			return setArrayFunctions(result);
+			return setArrayFunctions(result, arr.obj);
 		};
+
+		// sort asc by field
 		arr.sortAscBy = (field) => {
-			if (arr.length > 0) {
+			if (!arr.isEmpty()) {
 				let val = arr[0][field]
 				if (typeof val == "string") {
 					arr.sort((a, b) => {
@@ -536,8 +550,10 @@ window.opera.login = (mainHandler) => {
 			}
 			return arr;
 		};
+
+		// sort desc by field
 		arr.sortDescBy = (field) => {
-			if (arr.length > 0) {
+			if (!arr.isEmpty()) {
 				let val = arr[0][field]
 				if (typeof val == "string") {
 					arr.sort((a, b) => {
@@ -553,15 +569,14 @@ window.opera.login = (mainHandler) => {
 			}
 			return arr
 		};
+
+		// print to console
 		arr.print = () => {
-			if (arr.length > 0) {
-				console.log(`${arr.objname}s`, arr);
-			} else {
-				console.log(`${arr.objname}s is empty array`);
-			}
+			if (arr.isEmpty()) { console.log(`${arr.obj.name}s is empty array`); }
+			else { console.log(`${arr.obj.name}s`, arr); }
 		};
 
-		arr.objname = obj.name;
+		arr.obj = obj;
 		return arr;
 	};
 
