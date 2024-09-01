@@ -21,7 +21,7 @@ async function main() {
 
 	let projects = await region.getProjects();
 	projects.print();
-	projects.forEach((project) => {
+	projects.forEach(async (project) => {
 		let catalogs = await project.getCatalogs();
 		catalogs.print();
 	});
