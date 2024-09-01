@@ -75,7 +75,7 @@ window.opera.login = (mainHandler) => {
 	function Region() {
 
 		// get project list in region
-		this.getProjects = () => {
+		this.getProjects = async () => {
 			return this.rest.get('/iaas/api/projects').then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
