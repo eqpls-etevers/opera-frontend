@@ -304,15 +304,15 @@ window.opera.login = (mainHandler) => {
 	function Catalog() {
 
 		// get request form of catalog
-		this.getRequestForm = async () => {
-			this.region.rest.get(`/catalog/api/items/${this.id}/versions`).then((versions) => {
+		this.getRequestForm = () => {
+			return this.region.rest.get(`/catalog/api/items/${this.id}/versions`).then((versions) => {
 				if (versions.content.length > 0) {
 					let lastVersionId = versions.content[0].id
-					this.region.rest.get(`/catalog/api/items/${this.id}/versions/${lastVersionId}`).then((detail) => {
+					return this.region.rest.get(`/catalog/api/items/${this.id}/versions/${lastVersionId}`).then((detail) => {
 						this.schema = detail.schema;
 						this.formId = detail.formId;
 						if (this.formId) {
-							this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema).then((form) => {
+							return this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema).then((form) => {
 								this.form = form.model;
 								console.log("1");
 								return Object.assign(new RequestForm(), {
@@ -334,12 +334,12 @@ window.opera.login = (mainHandler) => {
 						}
 					});
 				} else {
-					this.region.rest.get(`/catalog/api/items/${this.id}`).then((detail) => {
+					return this.region.rest.get(`/catalog/api/items/${this.id}`).then((detail) => {
 						this.schema = detail.schema;
 						this.formId = detail.formId;
 						if (this.formId) {
 							try {
-								this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}).then((form) => {
+								return this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}).then((form) => {
 									this.form = form.model;
 									console.log("3");
 									return Object.assign(new RequestForm(), {
