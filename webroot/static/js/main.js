@@ -34,8 +34,12 @@ async function main() {
 			let resources = await deployment.getResources();
 			resources.print();
 			resources.forEach(async (resource) => {
-				let form = await resource.getRequestFrom();
-				form.print();
+				let actions = await resource.getActions();
+				actions.print();
+				actions.forEach(async (action) => {
+					let form = await action.getRequestForm();
+					form.print();
+				});
 			});
 		});
 	});
