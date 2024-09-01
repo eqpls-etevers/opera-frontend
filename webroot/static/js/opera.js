@@ -60,6 +60,43 @@ window.opera.login = (mainHandler) => {
 		"Cloud.SecurityGroup.Reconfigure.SecurityGroup": "재설정",
 	};
 
+	// Request Form
+	function RequestForm() {
+
+		// submit request data
+		this.submit = async (inputProperties) => {
+			switch (this.type) {
+				case "catalog":
+					return this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties).then((data) => {
+						return this.region.rest.get(`/deployment/api/deployments/${data[0].deploymentId}`).then((content) => {
+							content.region = this.region;
+							return Object.assign(new Deployment(), content);
+						});
+					});
+				case "action":
+					inputProperties.actionId = this.caller.id;
+					return this.region.rest.post(`/deployment/api/resources/${this.caller.resource.id}/requests`, inputProperties).then((data) => {
+						return this.region.rest.get(`/deployment/api/resources/${data.resourceIds[0]}`).then((content) => {
+							content.region = this.region;
+							return Object.assign(new Resource(), content);
+						});
+					});
+			}
+			throw "unsupport type request form";
+		};
+
+		// get html data which is drawn by this.schema & this.form information
+		this.draw = () => {
+			return "<div>draw is not implemented now</div>";
+		};
+
+		// register current request form to "window.opera.RequestForm" property
+		this.checkpoint = () => { window.opera.RequestForm = this; };
+
+		// print to console
+		this.print = () => { console.log(this); };
+	};
+
 	// function of getting region list is only sync type
 	window.opera.getRegions = async () => {
 		let result = [];
@@ -380,33 +417,6 @@ window.opera.login = (mainHandler) => {
 		this.print = () => { console.log(this); };
 	};
 
-	// Request Form
-	function RequestForm() {
-
-		// submit request data
-		this.submit = async (inputProperties) => {
-			switch (this.type) {
-				case "catalog":
-					return this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties).then((data) => { return data; });
-				case "action":
-					inputProperties.actionId = this.caller.id;
-					return this.region.rest.post(`/deployment/api/resources/${this.caller.resource.id}/requests`, inputProperties).then((data) => { return data; });
-			}
-			throw "unsupport type request form";
-		};
-
-		// get html data which is drawn by this.schema & this.form information
-		this.draw = () => {
-			return "<div>draw is not implemented now</div>";
-		};
-
-		// register current request form to "window.opera.RequestForm" property
-		this.checkpoint = () => { window.opera.RequestForm = this; };
-
-		// print to console
-		this.print = () => { console.log(this); };
-	};
-
 	function Deployment() {
 
 		// get resource list in project
@@ -433,6 +443,32 @@ window.opera.login = (mainHandler) => {
 					result.push(Object.assign(new Resource(), content))
 				});
 				return setArrayFunctions(result, Resource);
+			});
+		};
+
+		// reload current data
+		this.reload = async () => {
+			return this.region.rest.get(`/deployment/api/deployments/${this.id}`).then((content) => {
+				return Object.assign(this, content);
+			});
+		};
+
+		this.update = async (inputProperties) => {
+			inputProperties.actionId = "Deployment.Update";
+			return this.region.rest.post(`/deployment/api/deployments/${this.id}/requests`, inputProperties).then((data) => {
+				return this.region.rest.get(`/deployment/api/deployments/${data.deploymentId}`).then((content) => {
+					content.region = this.region;
+					return Object.assign(new Deployment(), content);
+				});
+			});
+		};
+
+		this.delete = async () => {
+			return this.region.rest.delete(`/deployment/api/deployments/${this.id}`).then((data) => {
+				return this.region.rest.get(`/deployment/api/deployments/${data.deploymentId}`).then((content) => {
+					content.region = this.region;
+					return Object.assign(new Deployment(), content);
+				});
 			});
 		};
 
@@ -475,6 +511,13 @@ window.opera.login = (mainHandler) => {
 			});
 		};
 
+		// reload current data
+		this.reload = async () => {
+			return this.region.rest.get(`/deployment/api/resources/${this.id}`).then((content) => {
+				return Object.assign(this, content);
+			});
+		};
+
 		// register current resource to "window.opera.Resource" property
 		this.checkpoint = () => { window.opera.Resource = this; };
 
@@ -490,7 +533,7 @@ window.opera.login = (mainHandler) => {
 				return Object.assign(new RequestForm(), {
 					type: "action",
 					caller: this,
-					schema: data.schema,
+					schema: data.schema ? data.schema : null,
 					form: null
 				});
 			});
