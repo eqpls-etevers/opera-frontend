@@ -17,13 +17,22 @@ function main() {
 	let regions = window.opera.getRegions();
 	let region = regions[0];
 
-	// region.getProjects().then((projects) => { projects.print(); });
-	// region.getDeployments().then((deployments) => { deployments.print(); });
-	// region.getResources().then((resources) => { resources.print(); });
+	region.getProjects().then((projects) => { projects.print(); });
+	region.getCatalogs().then((catalogs) => { catalogs.print(); });
+	region.getDeployments().then((deployments) => { deployments.print(); });
+	region.getResources().then((resources) => { resources.print(); });
 
 	region.getProjects().then((projects) => {
 		projects.print();
 		projects.forEach((project) => {
+			project.getCatalogs().then((catalogs) => {
+				catalogs.print();
+				catalogs.forEach((catalog) => {
+					catalog.getRequestForm().then((form) => {
+						form.print();
+					});
+				});
+			});
 			project.getDeployments().then((deployments) => {
 				deployments.print();
 				deployments.forEach((deployment) => {
@@ -32,40 +41,10 @@ function main() {
 						resources.forEach((resource) => {
 							resource.getActions().then((actions) => {
 								actions.print();
-							});
-						});
-					});
-				});
-			});
-		});
-	});
-
-
-
-
-	/*
-	regions.print();
-	regions.forEach((region) => {
-		region.getProjects((projects) => {
-			projects.print();
-			projects.forEach((project) => {
-				project.getCatalogs((catalogs) => {
-					catalogs.print();
-					catalogs.forEach((catalog) => {
-						catalog.getRequestForm((form) => {
-							form.print();
-						});
-					});
-				});
-				project.getDeployments((deployments) => {
-					deployments.print();
-					deployments.forEach((deployment) => {
-						deployment.getResources((resources) => {
-							resources.print();
-							resources.forEach((resource) => {
-								resource.getActions((actions) => {
-									actions.sortAscBy("displayName");
-									actions.print();
+								actions.forEach((action) => {
+									action.getRequestForm().then((form) => {
+										form.print();
+									});
 								});
 							});
 						});
@@ -74,7 +53,6 @@ function main() {
 			});
 		});
 	});
-	*/
 };
 
 window.opera.login(main);
