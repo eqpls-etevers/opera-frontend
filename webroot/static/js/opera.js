@@ -237,7 +237,7 @@ window.opera.login = (mainHandler) => {
 			return this.region.rest.get(`/catalog/api/items?projects=${this.id}`).then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
-					content.region = this;
+					content.region = this.region;
 					result.push(Object.assign(new Catalog(), content));
 				});
 				return setArrayFunctions(result);
