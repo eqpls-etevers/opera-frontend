@@ -506,9 +506,12 @@ window.opera.login = (mainHandler) => {
 	// abstract of aria object array
 	function setArrayFunctions(arr, obj) {
 
+		// get length
+		arr.len = () => { return arr.length; };
+
 		// check empty
-		arr.isEmpty = () => {
-			if (arr.length == 0) { return true; }
+		arr.empty = () => {
+			if (arr.len() == 0) { return true; }
 			else { return false; }
 		};
 
@@ -534,7 +537,7 @@ window.opera.login = (mainHandler) => {
 
 		// sort asc by field
 		arr.sortAscBy = (field) => {
-			if (!arr.isEmpty()) {
+			if (!arr.empty()) {
 				let val = arr[0][field]
 				if (typeof val == "string") {
 					arr.sort((a, b) => {
@@ -553,7 +556,7 @@ window.opera.login = (mainHandler) => {
 
 		// sort desc by field
 		arr.sortDescBy = (field) => {
-			if (!arr.isEmpty()) {
+			if (!arr.empty()) {
 				let val = arr[0][field]
 				if (typeof val == "string") {
 					arr.sort((a, b) => {
@@ -572,7 +575,7 @@ window.opera.login = (mainHandler) => {
 
 		// print to console
 		arr.print = () => {
-			if (arr.isEmpty()) { console.log(`${arr.obj.name}s is empty array`); }
+			if (arr.empty()) { console.log(`${arr.obj.name}s is empty array`); }
 			else { console.log(`${arr.obj.name}s`, arr); }
 		};
 
