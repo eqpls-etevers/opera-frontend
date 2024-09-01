@@ -3,7 +3,7 @@
 window.opera = window.opera || {};
 window.opera.login = (mainHandler) => {
 
-	// searchable resource type
+	// searchable resource type for param "type" at getResources
 	window.opera.resourceType = {
 		"vm": "Cloud.Machine,Cloud.vSphere.Machine",
 		"disk": "Cloud.Volume,Cloud.vSphere.Disk",
@@ -136,7 +136,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get deployment list in region
-		this.getDeployments = async (search, sort) => {
+		this.getDeployments = async (search, sort) => { // fix to "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported Default value : List [ "type, name,ASC" ]"
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
 			if (typeof sort == "list" && sort.length == 2) {
@@ -158,7 +158,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get resource list in region
-		this.getResources = async (type, tag, search, sort) => {
+		this.getResources = async (type, tag, search, sort) => { // fix to "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported Default value : List [ "type, name,ASC" ]"
 			let query = [];
 			if (type) {
 				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
@@ -286,7 +286,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get deployment list in project
-		this.getDeployments = async (search, sort) => {
+		this.getDeployments = async (search, sort) => { // fix to "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported Default value : List [ "type, name,ASC" ]"
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
 			if (typeof sort == "list" && sort.length == 2) {
@@ -308,7 +308,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get resource list in project
-		this.getResources = async (type, tag, search, sort) => {
+		this.getResources = async (type, tag, search, sort) => { // fix to "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported Default value : List [ "type, name,ASC" ]"
 			let query = [];
 			if (type) {
 				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
@@ -419,8 +419,13 @@ window.opera.login = (mainHandler) => {
 
 	function Deployment() {
 
+		// get project of deployment
+		this.getProject = async () => {
+			return this.region.rest.get(`/iaas/api/projects/${this.projectId}`).then((data) => { return Object.assign(new Project(), data); });
+		};
+
 		// get resource list in project
-		this.getResources = async (type, tag, search, sort) => {
+		this.getResources = async (type, tag, search, sort) => { // fix to "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported Default value : List [ "type, name,ASC" ]"
 			let query = [];
 			if (type) {
 				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
