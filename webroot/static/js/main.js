@@ -17,15 +17,13 @@ function main() {
 	let regions = window.opera.getRegions();
 	let region = regions[0];
 
-	/*
 	region.getProjects().then((projects) => { projects.print(); });
 	region.getCatalogs().then((catalogs) => { catalogs.print(); });
 	region.getDeployments().then((deployments) => { deployments.print(); });
 	region.getResources().then((resources) => { resources.print(); });
-	*/
 
 	region.getProjects().then((projects) => {
-		//projects.print();
+		projects.print();
 		projects.forEach((project) => {
 			project.getCatalogs().then((catalogs) => {
 				catalogs.print();
@@ -35,7 +33,6 @@ function main() {
 					});
 				});
 			});
-			/*
 			project.getDeployments().then((deployments) => {
 				deployments.print();
 				deployments.forEach((deployment) => {
@@ -54,7 +51,6 @@ function main() {
 					});
 				});
 			});
-			*/
 		});
 	});
 };
