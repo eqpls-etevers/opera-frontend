@@ -21,10 +21,10 @@ async function main() {
 
 	let projects = await region.getProjects();
 	projects.print();
-	for (let i=0; i<projects.len(); i++) {
-		let project = projects[i];
-		project.print();
-	}
+	projects.forEach((project) => {
+		let catalogs = await project.getCatalogs();
+		catalogs.print();
+	});
 
 
 	/*
