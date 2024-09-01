@@ -98,7 +98,7 @@ window.opera.login = (mainHandler) => {
 		this.getDeployments = (search, sort) => {
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
-			if (typeof sort == "list" & sort.length == 2) {
+			if (typeof sort == "list" && sort.length == 2) {
 				let field = sort[0];
 				let order = sort[1];
 				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
@@ -125,7 +125,7 @@ window.opera.login = (mainHandler) => {
 				else { throw `"${type}" is not support type option`; }
 			}
 			if (tag) { query.push(`tags=${tag}`); }
-			if (typeof sort == "list" & sort.length == 2) {
+			if (typeof sort == "list" && sort.length == 2) {
 				let field = sort[0];
 				let order = sort[1];
 				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
@@ -248,7 +248,7 @@ window.opera.login = (mainHandler) => {
 		this.getDeployments = (search, sort) => {
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
-			if (typeof sort == "list" & sort.length == 2) {
+			if (typeof sort == "list" && sort.length == 2) {
 				let field = sort[0];
 				let order = sort[1];
 				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
@@ -275,7 +275,7 @@ window.opera.login = (mainHandler) => {
 				else { throw `"${type}" is not support type option`; }
 			}
 			if (tag) { query.push(`tags=${tag}`); }
-			if (typeof sort == "list" & sort.length == 2) {
+			if (typeof sort == "list" && sort.length == 2) {
 				let field = sort[0];
 				let order = sort[1];
 				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
@@ -414,7 +414,7 @@ window.opera.login = (mainHandler) => {
 				else { throw `"${type}" is not support type option`; }
 			}
 			if (tag) { query.push(`tags=${tag}`); }
-			if (typeof sort == "list" & sort.length == 2) {
+			if (typeof sort == "list" && sort.length == 2) {
 				let field = sort[0];
 				let order = sort[1];
 				if (field && (order == "asc" || order == "desc")) { query.push(`sort=${field},${order}`); }
