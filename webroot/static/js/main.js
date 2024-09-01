@@ -17,8 +17,6 @@ async function main() {
 	let regions = await window.opera.getRegions();
 	let region = regions[0];
 
-	//region.getProjects().then((projects) => { projects.print(); });
-
 	let projects = await region.getProjects();
 	projects.print();
 	projects.forEach(async (project) => {
@@ -33,14 +31,15 @@ async function main() {
 		deployments.print();
 		for (let i = 0; i < deployments.len(); i++) {
 			let deployment = deployments[i];
-			let resources = await deployment.getResources();
-			resources.print();
-			resources.forEach(async (resource) => {
-				let actions = await resource.getActions();
-				actions.print();
-				actions.forEach(async (action) => {
-					let form = await action.getRequestForm();
-					form.print();
+			deployment.getResources().then((resources) => {
+				resources.print();
+				resources.forEach(async (resource) => {
+					let actions = await resource.getActions();
+					actions.print();
+					actions.forEach(async (action) => {
+						let form = await action.getRequestForm();
+						form.print();
+					});
 				});
 			});
 		}
