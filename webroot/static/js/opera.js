@@ -314,7 +314,6 @@ window.opera.login = (mainHandler) => {
 						if (this.formId) {
 							return this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema).then((form) => {
 								this.form = form.model;
-								console.log("1");
 								return Object.assign(new RequestForm(), {
 									type: "catalog",
 									caller: this,
@@ -324,7 +323,6 @@ window.opera.login = (mainHandler) => {
 							});
 						} else {
 							this.form = null;
-							console.log("2");
 							return Object.assign(new RequestForm(), {
 								type: "catalog",
 								caller: this,
@@ -341,7 +339,6 @@ window.opera.login = (mainHandler) => {
 							try {
 								return this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}).then((form) => {
 									this.form = form.model;
-									console.log("3");
 									return Object.assign(new RequestForm(), {
 										type: "catalog",
 										caller: this,
@@ -351,7 +348,6 @@ window.opera.login = (mainHandler) => {
 								});
 							} catch (e) {
 								this.form = null;
-								console.log("4");
 								return Object.assign(new RequestForm(), {
 									type: "catalog",
 									caller: this,
@@ -361,7 +357,6 @@ window.opera.login = (mainHandler) => {
 							}
 						} else {
 							this.form = null;
-							console.log("5");
 							return Object.assign(new RequestForm(), {
 								type: "catalog",
 								caller: this,
