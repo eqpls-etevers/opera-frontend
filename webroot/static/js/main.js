@@ -31,6 +31,7 @@ function main() {
 				catalogs.print();
 				catalogs.forEach((catalog) => {
 					catalog.getRequestForm().then((form) => {
+						console.log(form);
 						form.print();
 					});
 				});
