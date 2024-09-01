@@ -5,9 +5,13 @@ window.opera.login = (mainHandler) => {
 
 	// searchable resource type
 	window.opera.resourceType = {
-		"vm": "Cloud.vSphere.Machine",
-		"disk": "Cloud.vSphere.Disk",
-		"network": "Cloud.Network",
+		"vm": "Cloud.Machine,Cloud.vSphere.Machine",
+		"disk": "Cloud.Volume,Cloud.vSphere.Disk",
+		"network": "Cloud.Network,Cloud.NSX.Network",
+		"firewall": "Cloud.SecurityGroup",
+		"loadbalancer": "Cloud.LoadBalancer,Cloud.NSX.LoadBalancer",
+		"gateway": "Cloud.NSX.Gateway",
+		"nat": "Cloud.NSX.Nat",
 	};
 
 	// only support action in list
@@ -117,14 +121,14 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get resource list in region
-		this.getResources = (search, type, tag, sort) => {
+		this.getResources = (type, tag, search, sort) => {
 			let query = [];
-			if (search) { query.push(`search=${search}`); }
 			if (type) {
 				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
 				else { throw `"${type}" is not support type option`; }
 			}
 			if (tag) { query.push(`tags=${tag}`); }
+			if (search) { query.push(`search=${search}`); }
 			if (typeof sort == "list" && sort.length == 2) {
 				let field = sort[0];
 				let order = sort[1];
@@ -267,14 +271,14 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get resource list in project
-		this.getResources = (search, type, tag, sort) => {
+		this.getResources = (type, tag, search, sort) => {
 			let query = [];
-			if (search) { query.push(`search=${search}`); }
 			if (type) {
 				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
 				else { throw `"${type}" is not support type option`; }
 			}
 			if (tag) { query.push(`tags=${tag}`); }
+			if (search) { query.push(`search=${search}`); }
 			if (typeof sort == "list" && sort.length == 2) {
 				let field = sort[0];
 				let order = sort[1];
@@ -406,14 +410,14 @@ window.opera.login = (mainHandler) => {
 	function Deployment() {
 
 		// get resource list in project
-		this.getResources = (search, type, tag, sort) => {
+		this.getResources = (type, tag, search, sort) => {
 			let query = [];
-			if (search) { query.push(`search=${search}`); }
 			if (type) {
 				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
 				else { throw `"${type}" is not support type option`; }
 			}
 			if (tag) { query.push(`tags=${tag}`); }
+			if (search) { query.push(`search=${search}`); }
 			if (typeof sort == "list" && sort.length == 2) {
 				let field = sort[0];
 				let order = sort[1];
