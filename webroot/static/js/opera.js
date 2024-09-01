@@ -61,7 +61,7 @@ window.opera.login = (mainHandler) => {
 	};
 
 	// function of getting region list is only sync type
-	window.opera.getRegions = () => {
+	window.opera.getRegions = async () => {
 		let result = [];
 		window.opera.regions.hostnames.forEach((hostname) => {
 			result.push(Object.assign(new Region(), window.opera.regions[hostname]));
@@ -87,7 +87,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get catalog list in region
-		this.getCatalogs = () => {
+		this.getCatalogs = async () => {
 			return this.rest.get('/catalog/api/items').then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
@@ -99,7 +99,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get deployment list in region
-		this.getDeployments = (search, sort) => {
+		this.getDeployments = async (search, sort) => {
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
 			if (typeof sort == "list" && sort.length == 2) {
@@ -121,7 +121,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get resource list in region
-		this.getResources = (type, tag, search, sort) => {
+		this.getResources = async (type, tag, search, sort) => {
 			let query = [];
 			if (type) {
 				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
@@ -237,7 +237,7 @@ window.opera.login = (mainHandler) => {
 	function Project() {
 
 		// get catalog list in project
-		this.getCatalogs = () => {
+		this.getCatalogs = async () => {
 			return this.region.rest.get(`/catalog/api/items?projects=${this.id}`).then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
@@ -249,7 +249,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get deployment list in project
-		this.getDeployments = (search, sort) => {
+		this.getDeployments = async (search, sort) => {
 			let query = [];
 			if (search) { query.push(`search=${search}`); }
 			if (typeof sort == "list" && sort.length == 2) {
@@ -271,7 +271,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get resource list in project
-		this.getResources = (type, tag, search, sort) => {
+		this.getResources = async (type, tag, search, sort) => {
 			let query = [];
 			if (type) {
 				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
@@ -308,7 +308,7 @@ window.opera.login = (mainHandler) => {
 	function Catalog() {
 
 		// get request form of catalog
-		this.getRequestForm = () => {
+		this.getRequestForm = async () => {
 			return this.region.rest.get(`/catalog/api/items/${this.id}/versions`).then((versions) => {
 				if (versions.content.length > 0) {
 					let lastVersionId = versions.content[0].id
@@ -384,7 +384,7 @@ window.opera.login = (mainHandler) => {
 	function RequestForm() {
 
 		// submit request data
-		this.submit = (inputProperties) => {
+		this.submit = async (inputProperties) => {
 			switch (this.type) {
 				case "catalog":
 					return this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties).then((data) => { return data; });
@@ -410,7 +410,7 @@ window.opera.login = (mainHandler) => {
 	function Deployment() {
 
 		// get resource list in project
-		this.getResources = (type, tag, search, sort) => {
+		this.getResources = async (type, tag, search, sort) => {
 			let query = [];
 			if (type) {
 				if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
@@ -446,13 +446,13 @@ window.opera.login = (mainHandler) => {
 	function Resource() {
 
 		// get project of resource
-		this.getProject = () => {
+		this.getProject = async () => {
 			if (this.properties.project) { return this.region.rest.get(`/iaas/api/projects/${this.properties.project}`).then((data) => { return Object.assign(new Project(), data); }); }
 			else { throw "could not get project: this resource may be out of project scopes"; }
 		};
 
 		// get deployment of resource
-		this.getDeployment = () => {
+		this.getDeployment = async () => {
 			return this.region.rest.get(`/deployment/api/resources/${this.id}}?expand=deployment`).then((data) => {
 				if (data.deployment) { return this.region.rest.get(`/deployment/api/deployments/${data.deployment.id}`).then((data) => { return Object.assign(new Deployment(), data); }); }
 				else { throw "could not get deployment: this resource may be out of deployment scopes"; }
@@ -460,7 +460,7 @@ window.opera.login = (mainHandler) => {
 		};
 
 		// get available actions of resource
-		this.getActions = () => {
+		this.getActions = async () => {
 			return this.region.rest.get(`/deployment/api/resources/${this.id}/actions`).then((data) => {
 				let result = [];
 				data.forEach((content) => {
@@ -485,7 +485,7 @@ window.opera.login = (mainHandler) => {
 	function Action() {
 
 		// get request form of action
-		this.getRequestForm = () => {
+		this.getRequestForm = async () => {
 			return this.region.rest.get(`/deployment/api/resources/${this.resource.id}/actions/${this.id}`).then((data) => {
 				return Object.assign(new RequestForm(), {
 					type: "action",
