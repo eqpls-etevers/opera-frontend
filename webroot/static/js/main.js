@@ -6,14 +6,14 @@ async function main() {
 	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
 	document.getElementById("vidm-access-token").innerText = window.opera.vidm.accessToken;
 
-	let regionsDom = document.getElementById("regions-access-tokens");
+	let regionsDom = document.getElementById("regions-access-tokens"); // get the region information dom
 
 	let regions = await window.opera.getRegions(); // get region list by "await" async code format
-	for (let i = 0; i < regions.len(); i++) {
-		let region = regions[i];
-		let dom = document.createElement('p');
-		dom.innerText = `${region.hostname}: ${region.accessToken}`;
-		regionsDom.appendChild(dom);
+	for (let i = 0; i < regions.len(); i++) { // iterate region list by "for" code format
+		let region = regions[i]; // set a region
+		let dom = document.createElement('p'); // create "p" tag dom
+		dom.innerText = `${region.hostname}: ${region.accessToken}`; // input region information text to a created "p" tag
+		regionsDom.appendChild(dom); // append a created "p" tag dom to region information dom
 	}
 
 	let region = regions[0]; // set first region
@@ -48,4 +48,4 @@ async function main() {
 	});
 };
 
-window.opera.login(main);
+window.opera.login(main); // login(check auth or redirect to login page) and execute the "main"" function
