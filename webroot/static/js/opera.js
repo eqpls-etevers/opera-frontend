@@ -67,7 +67,7 @@ window.opera.login = (mainHandler) => {
 
 	// all functions & objects are async types which must be required result handler (function type) in params
 
-	// Region 
+	// Region
 	function Region() {
 
 		// get project list in region
@@ -234,7 +234,7 @@ window.opera.login = (mainHandler) => {
 
 		// get catalog list in project
 		this.getCatalogs = () => {
-			return this.rest.get(`/catalog/api/items?projects=${this.id}`).then((data) => {
+			return this.region.rest.get(`/catalog/api/items?projects=${this.id}`).then((data) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this;
