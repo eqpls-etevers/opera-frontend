@@ -305,7 +305,7 @@ window.opera.login = (mainHandler) => {
 
 		// get request form of catalog
 		this.getRequestForm = () => {
-			return this.region.rest.get(`/catalog/api/items/${this.id}/versions`).then((versions) => {
+			this.region.rest.get(`/catalog/api/items/${this.id}/versions`).then((versions) => {
 				if (versions.content.length > 0) {
 					let lastVersionId = versions.content[0].id
 					this.region.rest.get(`/catalog/api/items/${this.id}/versions/${lastVersionId}`).then((detail) => {
