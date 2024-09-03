@@ -643,7 +643,7 @@ window.opera.login = (main) => {
 					else {
 						window.common.util.delCookie("ARIA_ENDPOINT_ID");
 						window.location.replace("/aria/auth/login");
-						throw "break for middleware authorization";
+						throw "break for aria authorization";
 					}
 				}).then((endpoint) => {
 					let regions = {};
@@ -657,7 +657,7 @@ window.opera.login = (main) => {
 				});
 			} else {
 				window.location.replace("/aria/auth/login");
-				throw "break for middleware authorization";
+				throw "break for aria authorization";
 			}
 		};
 		window.common.auth.logoutMiddleWare = async () => { window.common.util.delCookie("ARIA_ENDPOINT_ID"); };
