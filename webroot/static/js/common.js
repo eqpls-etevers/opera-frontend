@@ -109,7 +109,8 @@ window.common.init = (main) => {
 			window.common.auth.loginError();
 		};
 		keycloak.init({
-			onLoad: onLogin ? "check-sso" : "login-required",
+			//onLoad: onLogin ? "check-sso" : "login-required",
+			onLoad: "login-required",
 			redirectUri: redirectUri ? redirectUri : "/"
 		});
 	};
