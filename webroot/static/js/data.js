@@ -1,5 +1,139 @@
 window.module = window.module || {};
-window.module.data = window.module.data || {};
+window.module.data = window.module.data || {
+	init: () => {
+		console.log("window.module.data start initialization");
+
+		window.module.data.login = () => {
+			if (window.common.env.modules.data) {
+				return fetch("/minio/ui/api/v1/login").then((res) => {
+					if (res.ok) { return res.json(); }
+					throw res;
+				}).then((data) => {
+					return fetch(data.redirectRules[0].redirect).then((res) => {
+						if (res.ok) { return res.json(); }
+						throw res;
+					}).then((data) => {
+						data.state = decodeURIComponent(data.state);
+						return fetch("/minio/ui/api/v1/login/oauth2/auth", {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify(data)
+						}).then((res) => {
+							if (res.ok) {
+								return fetch("/minio/ui/cookie_to_data").then((res) => {
+									if (res.ok) { return res.json(); }
+									throw res;
+								}).then((data) => {
+									window.module.data.accessToken = data.token;
+								});
+							}
+							throw res;
+						});
+					});
+				});
+			} else { throw "window.module.data is not supported"; }
+		};
+
+		window.module.data.getBuckets = async () => {
+			return fetch("/minio/ui/api/v1/buckets").then((res) => {
+				if (res.ok) { return res.json(); }
+				throw res;
+			}).then((data) => {
+				let result = [];
+				data.buckets.forEach((content) => { result.push(Object.assign(new Bucket(), content)); });
+				return __set_data_array_functions__(result, Bucket);
+			});
+		};
+
+		function Bucket() {
+			// print to console
+			this.print = () => { console.log(this); };
+		};
+
+		function __set_data_array_functions__(arr, obj) {
+
+			// get length
+			arr.len = () => { return arr.length; };
+
+			// check empty
+			arr.empty = () => {
+				if (arr.len() == 0) { return true; }
+				else { return false; }
+			};
+
+			// find one object by id
+			arr.findById = (id) => {
+				arr.forEach((content) => { if (id == content.id) { return content; } });
+				return None
+			};
+
+			// get list of name included
+			arr.searchByName = (name) => {
+				let result = [];
+				arr.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
+				return setArrayFunctions(result, arr.obj);
+			};
+
+			// get list of match value at specific field
+			arr.searchByField = (field, value) => {
+				let result = [];
+				arr.forEach((content) => { if (value == content[field]) { result.push(content); } });
+				return setArrayFunctions(result, arr.obj);
+			};
+
+			// sort asc by field
+			arr.sortAscBy = (field) => {
+				if (!arr.empty()) {
+					let val = arr[0][field]
+					if (typeof val == "string") {
+						arr.sort((a, b) => {
+							let aval = a[field];
+							let bval = b[field];
+							return aval < bval ? -1 : aval > bval ? 1 : 0;
+						});
+					} else if (typeof val == "number") {
+						arr.sort((a, b) => { return a[field] - b[field]; });
+					} else {
+						console.error("could not sort", arr);
+					}
+				}
+				return arr;
+			};
+
+			// sort desc by field
+			arr.sortDescBy = (field) => {
+				if (!arr.empty()) {
+					let val = arr[0][field]
+					if (typeof val == "string") {
+						arr.sort((a, b) => {
+							let aval = a[field];
+							let bval = b[field];
+							return aval > bval ? -1 : aval < bval ? 1 : 0;
+						});
+					} else if (typeof val == "number") {
+						arr.sort((a, b) => { return b[field] - a[field]; });
+					} else {
+						console.error("could not sort", arr);
+					}
+				}
+				return arr
+			};
+
+			// print to console
+			arr.print = () => {
+				if (arr.empty()) { console.log(`${arr.obj.name}s is empty array`); }
+				else { console.log(`${arr.obj.name}s`, arr); }
+			};
+
+			arr.obj = obj;
+			return arr;
+		};
+
+		console.log("window.module.data is ready");
+	}
+};
+
+/*
 window.module.data.init = () => {
 
 	console.log("window.module.data start initialization");
@@ -137,8 +271,6 @@ window.module.data.init = () => {
 	};
 
 	console.log("window.module.data is ready");
-
-	/*
 
 	window.module.data.action = {};
 
@@ -394,6 +526,7 @@ window.module.data.init = () => {
 			} else if (errorHandler) { errorHandler(bucket, path, res); }
 		});
 	};
-	*/
 
 };
+
+*/

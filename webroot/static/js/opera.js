@@ -2,7 +2,7 @@ window.opera = window.opera || {
 	init: (main) => {
 		// initialize common lib
 		window.common.init(() => {
-			//window.module.data.login();
+			window.module.data.login();
 			main();
 		});
 
