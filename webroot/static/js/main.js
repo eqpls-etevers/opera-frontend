@@ -16,6 +16,7 @@ async function main() {
 		regionsDom.appendChild(dom); // append a created "p" tag dom to region information dom
 	}
 
+
 	regions[0].checkpoint(); // set first region to checkpoint "window.opera.Region"
 
 	let projects = await window.opera.Region.getProjects(); // get project list by "await" async code format
@@ -48,4 +49,5 @@ async function main() {
 	});
 };
 
-window.opera.login(main); // login(check auth or redirect to login page) and execute the "main"" function
+window.opera.init(main);
+window.opera.login(); // login(check auth or redirect to login page) and execute the "main"" function

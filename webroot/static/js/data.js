@@ -2,9 +2,9 @@ window.module = window.module || {};
 window.module.data = window.module.data || {};
 window.module.data.init = () => {
 
-	window.module.data.func = {};
+	console.log("window.module.data start initialization");
 
-	window.module.data.login = async () => {
+	window.module.data.login = () => {
 		if (window.common.env.modules.data) {
 			return fetch("/minio/ui/api/v1/login").then((res) => {
 				if (res.ok) { return res.json(); }
@@ -45,6 +45,15 @@ window.module.data.init = () => {
 			return __set_data_array_functions__(result, Bucket);
 		});
 	};
+
+	function Bucket() {
+		// print to console
+		this.print = () => { console.log(this); };
+	};
+
+
+
+
 
 
 
@@ -127,27 +136,11 @@ window.module.data.init = () => {
 		return arr;
 	};
 
+	console.log("window.module.data is ready");
 
+	/*
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	window.module.data.action = {};
 
 	window.module.data.action.upload = async (bucket, path, files) => {
 		let results = [];
@@ -172,6 +165,58 @@ window.module.data.init = () => {
 		}
 		return results;
 	};
+
+	function Folder() {
+		this.upload = async (files) => {
+			return fetch(`/minio/ui/api/v1/buckets/${this.bucket}/objects/download?prefix=${prefix}`).then((res) => {
+				if (res.ok) { return res.blob(); }
+				throw res;
+			});
+		};
+
+		// print to console
+		this.print = () => { console.log(this); };
+	};
+
+	function File() {
+		this.download = async () => {
+			return fetch(`/minio/ui/api/v1/buckets/${this.bucket}/objects/download?prefix=${prefix}`).then((res) => {
+				if (res.ok) { return res.blob(); }
+				throw res;
+			});
+		};
+
+		// print to console
+		this.print = () => { console.log(this); };
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	window.module.data.action.download = async (url) => {
 		return fetch(`/minio/ui/api/v1${url}`).then((res) => {
@@ -349,90 +394,6 @@ window.module.data.init = () => {
 			} else if (errorHandler) { errorHandler(bucket, path, res); }
 		});
 	};
+	*/
 
-	// window.common.term /////////////////////////////
-	window.common.term.openNewWindow = (username, hostname, hostport) => {
-		hostport = hostport ? hostport : "22";
-		window.open(`/static/html/terminal.html?username=${username}&hostname=${hostname}&hostport=${hostport}`, "_blank", "menubar=no,status=no,titlebar=no,toolbar=no");
-	};
-
-	window.common.term.openNewTab = (username, hostname, hostport) => {
-		hostport = hostport ? hostport : "22";
-		window.open(`/static/html/terminal.html?username=${username}&hostname=${hostname}&hostport=${hostport}`, "_blank");
-	};
-
-	window.common.term.openOnDom = (dom, username, hostname, hostport) => {
-		hostport = hostport ? hostport : "22";
-		fetch(`/guacamole/api/session/ext/quickconnect/create?token=${window.common.auth.termToken}`, {
-			method: "POST",
-			headers: { "Content-Type": "application/x-www-form-urlencoded" },
-			body: `uri=ssh://${username}@${hostname}:${hostport}`
-		}).then((res) => {
-			if (res.ok) { return res.json(); }
-			throw res;
-		}).then((data) => {
-			window.common.term.connectToSSH(dom, data.identifier);
-		})
-	};
-
-	window.common.term.closeByException = (message) => {
-		window.alert(message);
-		window.close();
-	};
-
-	window.common.term.connectToSSH = (dom, id) => {
-		let guac = new Guacamole.Client(new Guacamole.WebSocketTunnel('/guacamole/websocket-tunnel'));
-		let guacDisp = guac.getDisplay().getElement();
-		dom.appendChild(guacDisp);
-
-		let options = `token=${window.common.auth.termToken}&GUAC_ID=${id}&GUAC_DATA_SOURCE=quickconnect&GUAC_TYPE=c`;
-		options += `&GUAC_WIDTH=${Math.round(window.innerWidth)}&GUAC_HEIGHT=${Math.round(window.innerHeight)}&GUAC_DPI=96`;
-		options += "&GUAC_AUDIO=audio/L8&GUAC_AUDIO=audio/L16&GUAC_IMAGE=image/jpeg&GUAC_IMAGE=image/png&GUAC_IMAGE=image/webp&GUAC_TIMEZONE=Asia/Seoul";
-
-		guac.connect(options);
-		guac.onerror = (error) => {
-			console.error(error);
-			window.common.term.closeByException("문제가 발생하여 연결하지 못했습니다");
-		};
-		guac.onstatechange = (state) => {
-			switch (state) {
-				case 3:
-					console.log("connected");
-					break;
-				case 4:
-					console.log("logout");
-					break;
-				case 5:
-					console.log("disconnected");
-					window.close();
-					break;
-			}
-		};
-		guac.onclipboard = (stream, mimetype) => {
-			if (mimetype == "text/plain") {
-				let reader = new Guacamole.StringReader(stream);
-				reader.ontext = (data) => { navigator.clipboard.writeText(data); };
-			}
-		};
-		window.onauxclick = () => {
-			navigator.clipboard.readText().then((data) => {
-				let stream = guac.createClipboardStream("text/plain");
-				let writer = new Guacamole.StringWriter(stream);
-				writer.sendText(data);
-				writer.sendEnd();
-			});
-		};
-		window.onresize = () => guac.sendSize(Math.round(window.innerWidth), Math.round(window.innerHeight));
-		window.onunload = () => guac.disconnect();
-		window.onclose = () => guac.disconnect();
-
-		let guacMouse = new Guacamole.Mouse(guacDisp);
-		guacMouse.onmousedown = (state) => guac.sendMouseState(state);
-		guacMouse.onmouseup = (state) => guac.sendMouseState(state);
-		guacMouse.onmousemove = (state) => guac.sendMouseState(state);
-
-		let guacKbd = new Guacamole.Keyboard(document);
-		guacKbd.onkeydown = (k) => guac.sendKeyEvent(1, k);
-		guacKbd.onkeyup = (k) => guac.sendKeyEvent(0, k);
-	};
 };
