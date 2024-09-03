@@ -95,9 +95,7 @@ window.common.init = (main) => {
 					"Content-Type": "application/json; charset=utf-8",
 					"Accept": "application/json; charset=utf-8"
 				};
-				return window.common.auth.checkUserInfo()
-					.then(window.common.auth.loginMiddleWare)
-					.catch(window.common.auth.loginError);
+				return window.common.auth.loginMiddleWare().then(window.common.auth.checkUserInfo)
 			};
 			window.common.auth.postLogin().then(window.common.auth.loginSuccess);
 			window.common.auth.startTokenDaemon();
