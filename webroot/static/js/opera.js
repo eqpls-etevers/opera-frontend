@@ -58,6 +58,14 @@ window.opera.login = (main) => {
 		// Security Group
 		"Cloud.SecurityGroup.Delete": "삭제",
 		"Cloud.SecurityGroup.Reconfigure.SecurityGroup": "재설정",
+
+		// NSX Gateway
+		"Cloud.NSX.Gateway.Delete": "삭제",
+		"Cloud.NSX.Gateway.ComputeGateway.Reconfigure": "재설정",
+
+		// NSX Load Balancer
+		"Cloud.NSX.LoadBalancer.Delete": "삭제",
+		"Cloud.NSX.LoadBalancer.LoadBalancer.Reconfigure": "재설정",
 	};
 
 	// Request Form
