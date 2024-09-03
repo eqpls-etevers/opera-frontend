@@ -5,22 +5,23 @@ window.module.data = window.module.data || {
 
 		window.module.data.login = () => {
 			if (window.common.env.modules.data) {
-				return fetch("/minio/ui/api/v1/login").then((res) => {
+				fetch("/minio/ui/api/v1/login").then((res) => {
 					if (res.ok) { return res.json(); }
 					throw res;
 				}).then((data) => {
-					return fetch(data.redirectRules[0].redirect).then((res) => {
+					fetch(data.redirectRules[0].redirect).then((res) => {
 						if (res.ok) { return res.json(); }
 						throw res;
 					}).then((data) => {
 						data.state = decodeURIComponent(data.state);
-						return fetch("/minio/ui/api/v1/login/oauth2/auth", {
+						console.log(data);
+						fetch("/minio/ui/api/v1/login/oauth2/auth", {
 							method: "POST",
 							headers: { "Content-Type": "application/json" },
 							body: JSON.stringify(data)
 						}).then((res) => {
 							if (res.ok) {
-								return fetch("/minio/ui/cookie_to_data").then((res) => {
+								fetch("/minio/ui/cookie_to_data").then((res) => {
 									if (res.ok) { return res.json(); }
 									throw res;
 								}).then((data) => {
