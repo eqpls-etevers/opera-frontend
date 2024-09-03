@@ -1,5 +1,3 @@
-// javascript here
-
 window.opera = window.opera || {
 	init: (main) => {
 		// initialize common lib

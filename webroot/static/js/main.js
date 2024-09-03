@@ -49,5 +49,4 @@ async function main() {
 	});
 };
 
-window.opera.init(main);
-window.opera.login(); // login(check auth or redirect to login page) and execute the "main"" function
+window.opera.init(main).login(); // login(check auth or redirect to login page) and execute the "main"" function
