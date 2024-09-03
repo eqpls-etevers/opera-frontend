@@ -97,8 +97,9 @@ window.common.init = (main) => {
 				};
 				return window.common.auth.loginMiddleWare().then(window.common.auth.checkUserInfo)
 			};
-			window.common.auth.postLogin().then(window.common.auth.loginSuccess);
-			window.common.auth.startTokenDaemon();
+			window.common.auth.postLogin().then(() => {
+				window.common.auth.loginSuccess().then(window.common.auth.startTokenDaemon)
+			});
 		};
 		keycloak.onAuthError = () => { window.common.auth.loginError(); };
 		keycloak.init({
