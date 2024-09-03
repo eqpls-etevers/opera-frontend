@@ -72,15 +72,15 @@ window.opera.login = (main) => {
 	window.opera.getRegions = async () => {
 		let result = [];
 		window.opera.regions.hostnames.forEach((hostname) => {
-			result.push(Object.assign(new Region(), window.opera.regions[hostname]));
+			result.push(Object.assign(new OperaRegion(), window.opera.regions[hostname]));
 		});
-		return setArrayFunctions(result, Region);
+		return __set_opera_array_methods__(result, OperaRegion);
 	};
 
 	// all functions & objects are async types which must be required result handler (function type) in params
 
-	// Region
-	function Region() {
+	// OperaRegion
+	function OperaRegion() {
 
 		// get project list in region
 		this.getProjects = async () => {
@@ -88,9 +88,9 @@ window.opera.login = (main) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this;
-					result.push(Object.assign(new Project(), content));
+					result.push(Object.assign(new OperaProject(), content));
 				});
-				return setArrayFunctions(result, Project);
+				return __set_opera_array_methods__(result, OperaProject);
 			});
 		};
 
@@ -100,9 +100,9 @@ window.opera.login = (main) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this;
-					result.push(Object.assign(new Catalog(), content));
+					result.push(Object.assign(new OperaCatalog(), content));
 				});
-				return setArrayFunctions(result, Catalog);
+				return __set_opera_array_methods__(result, OperaCatalog);
 			});
 		};
 
@@ -122,9 +122,9 @@ window.opera.login = (main) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this;
-					result.push(Object.assign(new Deployment(), content));
+					result.push(Object.assign(new OperaDeployment(), content));
 				});
-				return setArrayFunctions(result, Deployment);
+				return __set_opera_array_methods__(result, OperaDeployment);
 			});
 		};
 
@@ -149,9 +149,9 @@ window.opera.login = (main) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this;
-					result.push(Object.assign(new Resource(), content))
+					result.push(Object.assign(new OperaResource(), content))
 				});
-				return setArrayFunctions(result, Resource);
+				return __set_opera_array_methods__(result, OperaResource);
 			});
 		};
 
@@ -241,8 +241,8 @@ window.opera.login = (main) => {
 		};
 	};
 
-	// Project
-	function Project() {
+	// OperaProject
+	function OperaProject() {
 
 		// get catalog list in project
 		this.getCatalogs = async () => {
@@ -250,9 +250,9 @@ window.opera.login = (main) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this.region;
-					result.push(Object.assign(new Catalog(), content));
+					result.push(Object.assign(new OperaCatalog(), content));
 				});
-				return setArrayFunctions(result, Catalog);
+				return __set_opera_array_methods__(result, OperaCatalog);
 			});
 		};
 
@@ -272,9 +272,9 @@ window.opera.login = (main) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this.region;
-					result.push(Object.assign(new Deployment(), content));
+					result.push(Object.assign(new OperaDeployment(), content));
 				});
-				return setArrayFunctions(result, Deployment);
+				return __set_opera_array_methods__(result, OperaDeployment);
 			});
 		};
 
@@ -299,9 +299,9 @@ window.opera.login = (main) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this.region;
-					result.push(Object.assign(new Resource(), content))
+					result.push(Object.assign(new OperaResource(), content))
 				});
-				return setArrayFunctions(result, Resource);
+				return __set_opera_array_methods__(result, OperaResource);
 			});
 		};
 
@@ -312,8 +312,8 @@ window.opera.login = (main) => {
 		this.print = () => { console.log(this); };
 	};
 
-	// Catalog
-	function Catalog() {
+	// OperaCatalog
+	function OperaCatalog() {
 
 		// get request form of catalog
 		this.getRequestForm = async () => {
@@ -326,7 +326,7 @@ window.opera.login = (main) => {
 						if (this.formId) {
 							return this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema).then((form) => {
 								this.form = form.model;
-								return Object.assign(new RequestForm(), {
+								return Object.assign(new OperaRequestForm(), {
 									type: "catalog",
 									caller: this,
 									schema: this.schema,
@@ -335,7 +335,7 @@ window.opera.login = (main) => {
 							});
 						} else {
 							this.form = null;
-							return Object.assign(new RequestForm(), {
+							return Object.assign(new OperaRequestForm(), {
 								type: "catalog",
 								caller: this,
 								schema: this.schema,
@@ -351,7 +351,7 @@ window.opera.login = (main) => {
 							try {
 								return this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}).then((form) => {
 									this.form = form.model;
-									return Object.assign(new RequestForm(), {
+									return Object.assign(new OperaRequestForm(), {
 										type: "catalog",
 										caller: this,
 										schema: this.schema,
@@ -360,7 +360,7 @@ window.opera.login = (main) => {
 								});
 							} catch (e) {
 								this.form = null;
-								return Object.assign(new RequestForm(), {
+								return Object.assign(new OperaRequestForm(), {
 									type: "catalog",
 									caller: this,
 									schema: this.schema,
@@ -369,7 +369,7 @@ window.opera.login = (main) => {
 							}
 						} else {
 							this.form = null;
-							return Object.assign(new RequestForm(), {
+							return Object.assign(new OperaRequestForm(), {
 								type: "catalog",
 								caller: this,
 								schema: this.schema,
@@ -388,8 +388,8 @@ window.opera.login = (main) => {
 		this.print = () => { console.log(this); };
 	};
 
-	// Deployment
-	function Deployment() {
+	// OperaDeployment
+	function OperaDeployment() {
 
 		// get project of deployment
 		this.getProject = async () => {
@@ -417,9 +417,9 @@ window.opera.login = (main) => {
 				let result = [];
 				data.content.forEach((content) => {
 					content.region = this.region;
-					result.push(Object.assign(new Resource(), content))
+					result.push(Object.assign(new OperaResource(), content))
 				});
-				return setArrayFunctions(result, Resource);
+				return __set_opera_array_methods__(result, OperaResource);
 			});
 		};
 
@@ -435,7 +435,7 @@ window.opera.login = (main) => {
 			return this.region.rest.post(`/deployment/api/deployments/${this.id}/requests`, inputProperties).then((data) => {
 				return this.region.rest.get(`/deployment/api/deployments/${data.deploymentId}`).then((content) => {
 					content.region = this.region;
-					return Object.assign(new Deployment(), content);
+					return Object.assign(new OperaDeployment(), content);
 				});
 			});
 		};
@@ -444,7 +444,7 @@ window.opera.login = (main) => {
 			return this.region.rest.delete(`/deployment/api/deployments/${this.id}`).then((data) => {
 				return this.region.rest.get(`/deployment/api/deployments/${data.deploymentId}`).then((content) => {
 					content.region = this.region;
-					return Object.assign(new Deployment(), content);
+					return Object.assign(new OperaDeployment(), content);
 				});
 			});
 		};
@@ -456,8 +456,8 @@ window.opera.login = (main) => {
 		this.print = () => { console.log(this); };
 	};
 
-	// Resource
-	function Resource() {
+	// OperaResource
+	function OperaResource() {
 
 		// get project of resource
 		this.getProject = async () => {
@@ -468,7 +468,7 @@ window.opera.login = (main) => {
 		// get deployment of resource
 		this.getDeployment = async () => {
 			return this.region.rest.get(`/deployment/api/resources/${this.id}}?expand=deployment`).then((data) => {
-				if (data.deployment) { return this.region.rest.get(`/deployment/api/deployments/${data.deployment.id}`).then((data) => { return Object.assign(new Deployment(), data); }); }
+				if (data.deployment) { return this.region.rest.get(`/deployment/api/deployments/${data.deployment.id}`).then((data) => { return Object.assign(new OperaDeployment(), data); }); }
 				else { throw "could not get deployment: this resource may be out of deployment scopes"; }
 			});
 		};
@@ -482,10 +482,10 @@ window.opera.login = (main) => {
 						content.region = this.region;
 						content.resource = this;
 						content.displayName = window.opera.resourceActions[content.id];
-						result.push(Object.assign(new Action(), content));
+						result.push(Object.assign(new OperaAction(), content));
 					} else { console.warn("could not support action", content); }
 				});
-				return setArrayFunctions(result, Action);
+				return __set_opera_array_methods__(result, OperaAction);
 			});
 		};
 
@@ -503,13 +503,13 @@ window.opera.login = (main) => {
 		this.print = () => { console.log(this); };
 	};
 
-	// Action
-	function Action() {
+	// OperaAction
+	function OperaAction() {
 
 		// get request form of action
 		this.getRequestForm = async () => {
 			return this.region.rest.get(`/deployment/api/resources/${this.resource.id}/actions/${this.id}`).then((data) => {
-				return Object.assign(new RequestForm(), {
+				return Object.assign(new OperaRequestForm(), {
 					type: "action",
 					caller: this,
 					schema: data.schema ? data.schema : null,
@@ -525,8 +525,8 @@ window.opera.login = (main) => {
 		this.print = () => { console.log(this); };
 	};
 
-	// Request Form
-	function RequestForm() {
+	// OperaRequestForm
+	function OperaRequestForm() {
 
 		// submit request data
 		this.submit = async (inputProperties) => {
@@ -535,7 +535,7 @@ window.opera.login = (main) => {
 					return this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties).then((data) => {
 						return this.region.rest.get(`/deployment/api/deployments/${data[0].deploymentId}`).then((content) => {
 							content.region = this.region;
-							return Object.assign(new Deployment(), content);
+							return Object.assign(new OperaDeployment(), content);
 						});
 					});
 				case "action":
@@ -543,7 +543,7 @@ window.opera.login = (main) => {
 					return this.region.rest.post(`/deployment/api/resources/${this.caller.resource.id}/requests`, inputProperties).then((data) => {
 						return this.region.rest.get(`/deployment/api/resources/${data.resourceIds[0]}`).then((content) => {
 							content.region = this.region;
-							return Object.assign(new Resource(), content);
+							return Object.assign(new OperaResource(), content);
 						});
 					});
 			}
@@ -563,7 +563,7 @@ window.opera.login = (main) => {
 	};
 
 	// abstract of aria object array
-	function setArrayFunctions(arr, obj) {
+	function __set_opera_array_methods__(arr, obj) {
 
 		// get length
 		arr.len = () => { return arr.length; };
@@ -584,14 +584,14 @@ window.opera.login = (main) => {
 		arr.searchByName = (name) => {
 			let result = [];
 			arr.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
-			return setArrayFunctions(result, arr.obj);
+			return __set_opera_array_methods__(result, arr.obj);
 		};
 
 		// get list of match value at specific field
 		arr.searchByField = (field, value) => {
 			let result = [];
 			arr.forEach((content) => { if (value == content[field]) { result.push(content); } });
-			return setArrayFunctions(result, arr.obj);
+			return __set_opera_array_methods__(result, arr.obj);
 		};
 
 		// sort asc by field

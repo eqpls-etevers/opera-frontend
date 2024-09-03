@@ -13,8 +13,10 @@ window.common.init = (main) => {
 	// tenant configurations //////////////////////////
 	window.common.env.tenant = "opera";
 	window.common.env.endpoint = "portal.sddc.lab";
-	window.common.env.isDataService = true;
-	window.common.env.isTermService = true;
+	window.common.env.modules = {
+		data: true,
+		term: true
+	}
 
 	// tenant post configurations /////////////////////
 	window.common.env.url = `https://${window.common.env.endpoint}`;
@@ -133,7 +135,10 @@ window.common.init = (main) => {
 
 	window.common.auth.startTokenDaemon = () => {
 		window.common.auth.keycloak.updateToken(5).then((refreshed) => {
-			if (refreshed) { window.common.auth.postLogin(); }
+			if (refreshed) {
+				console.log("token refreshed");
+				window.common.auth.postLogin();
+			}
 			setTimeout(window.common.auth.startTokenDaemon, 60000);
 		});
 	};
