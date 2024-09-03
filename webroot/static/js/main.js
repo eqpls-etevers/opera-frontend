@@ -16,6 +16,9 @@ async function main() {
 		regionsDom.appendChild(dom); // append a created "p" tag dom to region information dom
 	}
 
+	let buckets = await window.module.data.getBuckets();
+	buckets.print();
+
 /*
 	regions[0].checkpoint(); // set first region to checkpoint "window.opera.Region"
 
