@@ -1,7 +1,7 @@
 // javascript here
 
 window.opera = window.opera || {};
-window.opera.login = (mainHandler) => {
+window.opera.login = (main) => {
 
 	// searchable resource type for param "type" at getResources
 	window.opera.resourceType = {
@@ -633,10 +633,10 @@ window.opera.login = (mainHandler) => {
 
 	// internal initialize for authorization
 	window.common.init(() => {
-		window.common.auth.loginMiddleWare = (loginProcess) => {
+		window.common.auth.loginMiddleWare = async () => {
 			let endpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
 			if (endpointId) {
-				fetch(`/uerp/v1/aria/endpoint/${endpointId}`, {
+				return fetch(`/uerp/v1/aria/endpoint/${endpointId}`, {
 					headers: window.common.auth.headers
 				}).then((res) => {
 					if (res.ok) { return res.json(); }
@@ -653,13 +653,13 @@ window.opera.login = (mainHandler) => {
 					});
 					window.opera.vidm = endpoint.vidm;
 					window.opera.regions = regions;
-					loginProcess();
 				});
 			} else {
 				window.location.replace("/aria/auth/login");
 			}
 		};
-		window.common.auth.logoutMiddleWare = () => { window.common.util.delCookie("ARIA_ENDPOINT_ID"); };
-		window.common.auth.login("/", mainHandler, () => { console.error("login error"); });
+		window.common.auth.logoutMiddleWare = async () => { window.common.util.delCookie("ARIA_ENDPOINT_ID"); };
+		window.common.auth.loginSuccess = main;
+		window.common.auth.login("/");
 	});
 };
