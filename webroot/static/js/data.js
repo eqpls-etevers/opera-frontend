@@ -9,6 +9,7 @@ window.module.data = window.module.data || {
 					if (res.ok) { return res.json(); }
 					throw res;
 				}).then((data) => {
+					console.log(data);
 					fetch(data.redirectRules[0].redirect).then((res) => {
 						if (res.ok) { return res.json(); }
 						throw res;
