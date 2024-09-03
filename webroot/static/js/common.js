@@ -78,6 +78,8 @@ window.common.init = (main) => {
 
 	//// window.common.auth login library /////////////
 	window.common.auth.login = (redirectUri) => {
+		let onLogin = window.common.util.getCookie("EQPLS_ON_LOGIN");
+		window.common.util.setCookie("EQPLS_ON_LOGIN", "TRUE");
 		let keycloak = new Keycloak({
 			url: window.common.auth.url,
 			realm: window.common.auth.getOrg(),
@@ -95,13 +97,19 @@ window.common.init = (main) => {
 					"Content-Type": "application/json; charset=utf-8",
 					"Accept": "application/json; charset=utf-8"
 				};
-				return window.common.auth.loginMiddleWare().then(window.common.auth.checkUserInfo)
+				return window.common.auth.loginMiddleWare().then(window.common.auth.checkUserInfo);
 			};
-			window.common.auth.postLogin().then(() => { window.common.auth.loginSuccess().then(window.common.auth.startTokenDaemon) });
+			window.common.auth.postLogin().then(() => {
+				window.common.util.delCookie("EQPLS_ON_LOGIN");
+				window.common.auth.loginSuccess().then(window.common.auth.startTokenDaemon);
+			});
 		};
-		keycloak.onAuthError = () => { window.common.auth.loginError(); };
+		keycloak.onAuthError = () => {
+			window.common.util.delCookie("EQPLS_ON_LOGIN");
+			window.common.auth.loginError();
+		};
 		keycloak.init({
-			onLoad: 'login-required',
+			onLoad: onLogin ? "check-sso" : "login-required",
 			redirectUri: redirectUri ? redirectUri : "/"
 		});
 	};
