@@ -1,6 +1,9 @@
 // javascript here
 
 async function main() {
+
+	console.log("run main");
+
 	document.getElementById("opera-username").innerText = window.common.auth.username;
 	document.getElementById("opera-userinfo").innerText = JSON.stringify(window.common.auth.userInfo);
 	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
