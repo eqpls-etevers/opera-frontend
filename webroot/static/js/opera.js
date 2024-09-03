@@ -68,43 +68,6 @@ window.opera.login = (main) => {
 		"Cloud.NSX.LoadBalancer.LoadBalancer.Reconfigure": "재설정",
 	};
 
-	// Request Form
-	function RequestForm() {
-
-		// submit request data
-		this.submit = async (inputProperties) => {
-			switch (this.type) {
-				case "catalog":
-					return this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties).then((data) => {
-						return this.region.rest.get(`/deployment/api/deployments/${data[0].deploymentId}`).then((content) => {
-							content.region = this.region;
-							return Object.assign(new Deployment(), content);
-						});
-					});
-				case "action":
-					inputProperties.actionId = this.caller.id;
-					return this.region.rest.post(`/deployment/api/resources/${this.caller.resource.id}/requests`, inputProperties).then((data) => {
-						return this.region.rest.get(`/deployment/api/resources/${data.resourceIds[0]}`).then((content) => {
-							content.region = this.region;
-							return Object.assign(new Resource(), content);
-						});
-					});
-			}
-			throw "unsupport type request form";
-		};
-
-		// get html data which is drawn by this.schema & this.form information
-		this.draw = () => {
-			return "<div>draw is not implemented now</div>";
-		};
-
-		// register current request form to "window.opera.RequestForm" property
-		this.checkpoint = () => { window.opera.RequestForm = this; };
-
-		// print to console
-		this.print = () => { console.log(this); };
-	};
-
 	// function of getting region list is only sync type
 	window.opera.getRegions = async () => {
 		let result = [];
@@ -425,6 +388,7 @@ window.opera.login = (main) => {
 		this.print = () => { console.log(this); };
 	};
 
+	// Deployment
 	function Deployment() {
 
 		// get project of deployment
@@ -492,6 +456,7 @@ window.opera.login = (main) => {
 		this.print = () => { console.log(this); };
 	};
 
+	// Resource
 	function Resource() {
 
 		// get project of resource
@@ -538,6 +503,7 @@ window.opera.login = (main) => {
 		this.print = () => { console.log(this); };
 	};
 
+	// Action
 	function Action() {
 
 		// get request form of action
@@ -554,6 +520,43 @@ window.opera.login = (main) => {
 
 		// register current action to "window.opera.Action" property
 		this.checkpoint = () => { window.opera.Action = this; };
+
+		// print to console
+		this.print = () => { console.log(this); };
+	};
+
+	// Request Form
+	function RequestForm() {
+
+		// submit request data
+		this.submit = async (inputProperties) => {
+			switch (this.type) {
+				case "catalog":
+					return this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties).then((data) => {
+						return this.region.rest.get(`/deployment/api/deployments/${data[0].deploymentId}`).then((content) => {
+							content.region = this.region;
+							return Object.assign(new Deployment(), content);
+						});
+					});
+				case "action":
+					inputProperties.actionId = this.caller.id;
+					return this.region.rest.post(`/deployment/api/resources/${this.caller.resource.id}/requests`, inputProperties).then((data) => {
+						return this.region.rest.get(`/deployment/api/resources/${data.resourceIds[0]}`).then((content) => {
+							content.region = this.region;
+							return Object.assign(new Resource(), content);
+						});
+					});
+			}
+			throw "unsupport type request form";
+		};
+
+		// get html data which is drawn by this.schema & this.form information
+		this.draw = () => {
+			return "<div>draw is not implemented now</div>";
+		};
+
+		// register current request form to "window.opera.RequestForm" property
+		this.checkpoint = () => { window.opera.RequestForm = this; };
 
 		// print to console
 		this.print = () => { console.log(this); };
