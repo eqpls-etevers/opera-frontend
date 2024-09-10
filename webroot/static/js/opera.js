@@ -11,7 +11,7 @@ window.opera = window.opera || {
 		// logout
 		window.opera.logout = () => {
 			window.common.util.delCookie("ARIA_ENDPOINT_ID");
-			window.common.auth.logout();
+			window.common.logout();
 		};
 
 		window.common.auth.loginServiceProviders = async () => {
