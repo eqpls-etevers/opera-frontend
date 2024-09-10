@@ -1,6 +1,6 @@
 // javascript here
 
-async function main() {
+window.opera.init(async () => { // main task
 	document.getElementById("opera-username").innerText = window.common.auth.username;
 	document.getElementById("opera-userinfo").innerText = JSON.stringify(window.common.auth.userInfo);
 	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
@@ -19,7 +19,7 @@ async function main() {
 	let buckets = await window.module.data.getBuckets();
 	buckets.print();
 
-/*
+	/*
 	regions[0].checkpoint(); // set first region to checkpoint "window.opera.Region"
 
 	let projects = await window.opera.Region.getProjects(); // get project list by "await" async code format
@@ -51,6 +51,4 @@ async function main() {
 		});
 	});
 	*/
-};
-
-window.opera.init(main).login(); // login(check auth or redirect to login page) and execute the "main"" function
+}).login(); // login(check auth or redirect to login page) and execute the "main" task

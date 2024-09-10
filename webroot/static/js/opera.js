@@ -1,14 +1,11 @@
 window.opera = window.opera || {
 	init: (main) => {
 		// initialize common lib
-		window.common.init(() => {
-			window.module.data.login();
-			main();
-		});
+		window.common.init(main);
 
 		// login
 		window.opera.login = () => {
-			window.common.auth.login("/");
+			window.common.login();
 		};
 
 		// logout
@@ -17,7 +14,7 @@ window.opera = window.opera || {
 			window.common.auth.logout();
 		};
 
-		window.common.auth.loginMiddleWare = async () => {
+		window.common.auth.loginServiceProviders = async () => {
 			let endpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
 			if (endpointId) {
 				return fetch(`/uerp/v1/aria/endpoint/${endpointId}`, {
@@ -44,7 +41,7 @@ window.opera = window.opera || {
 				throw "break for aria authorization";
 			}
 		};
-		window.common.auth.logoutMiddleWare = async () => { window.common.util.delCookie("ARIA_ENDPOINT_ID"); };
+		window.common.auth.logoutServiceProviders = async () => { window.common.util.delCookie("ARIA_ENDPOINT_ID"); };
 
 		// searchable resource type for param "type" at getResources
 		window.opera.resourceType = {
@@ -115,15 +112,15 @@ window.opera = window.opera || {
 		window.opera.getRegions = async () => {
 			let result = [];
 			window.opera.regions.hostnames.forEach((hostname) => {
-				result.push(Object.assign(new OperaRegion(), window.opera.regions[hostname]));
+				result.push(Object.assign(new Region(), window.opera.regions[hostname]));
 			});
-			return __set_opera_array_methods__(result, OperaRegion);
+			return window.common.util.setArrayFunctions(result, Region);
 		};
 
 		// all functions & objects are async types which must be required result handler (function type) in params
 
-		// OperaRegion
-		function OperaRegion() {
+		// Region
+		function Region() {
 
 			// get project list in region
 			this.getProjects = async () => {
@@ -131,9 +128,9 @@ window.opera = window.opera || {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this;
-						result.push(Object.assign(new OperaProject(), content));
+						result.push(Object.assign(new Project(), content));
 					});
-					return __set_opera_array_methods__(result, OperaProject);
+					return window.common.util.setArrayFunctions(result, Project);
 				});
 			};
 
@@ -143,9 +140,9 @@ window.opera = window.opera || {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this;
-						result.push(Object.assign(new OperaCatalog(), content));
+						result.push(Object.assign(new Catalog(), content));
 					});
-					return __set_opera_array_methods__(result, OperaCatalog);
+					return window.common.util.setArrayFunctions(result, Catalog);
 				});
 			};
 
@@ -165,9 +162,9 @@ window.opera = window.opera || {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this;
-						result.push(Object.assign(new OperaDeployment(), content));
+						result.push(Object.assign(new Deployment(), content));
 					});
-					return __set_opera_array_methods__(result, OperaDeployment);
+					return window.common.util.setArrayFunctions(result, Deployment);
 				});
 			};
 
@@ -192,9 +189,9 @@ window.opera = window.opera || {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this;
-						result.push(Object.assign(new OperaResource(), content))
+						result.push(Object.assign(new Resource(), content))
 					});
-					return __set_opera_array_methods__(result, OperaResource);
+					return window.common.util.setArrayFunctions(result, Resource);
 				});
 			};
 
@@ -284,8 +281,8 @@ window.opera = window.opera || {
 			};
 		};
 
-		// OperaProject
-		function OperaProject() {
+		// Project
+		function Project() {
 
 			// get catalog list in project
 			this.getCatalogs = async () => {
@@ -293,9 +290,9 @@ window.opera = window.opera || {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this.region;
-						result.push(Object.assign(new OperaCatalog(), content));
+						result.push(Object.assign(new Catalog(), content));
 					});
-					return __set_opera_array_methods__(result, OperaCatalog);
+					return window.common.util.setArrayFunctions(result, Catalog);
 				});
 			};
 
@@ -315,9 +312,9 @@ window.opera = window.opera || {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this.region;
-						result.push(Object.assign(new OperaDeployment(), content));
+						result.push(Object.assign(new Deployment(), content));
 					});
-					return __set_opera_array_methods__(result, OperaDeployment);
+					return window.common.util.setArrayFunctions(result, Deployment);
 				});
 			};
 
@@ -342,9 +339,9 @@ window.opera = window.opera || {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this.region;
-						result.push(Object.assign(new OperaResource(), content))
+						result.push(Object.assign(new Resource(), content))
 					});
-					return __set_opera_array_methods__(result, OperaResource);
+					return window.common.util.setArrayFunctions(result, Resource);
 				});
 			};
 
@@ -355,8 +352,8 @@ window.opera = window.opera || {
 			this.print = () => { console.log(this); };
 		};
 
-		// OperaCatalog
-		function OperaCatalog() {
+		// Catalog
+		function Catalog() {
 
 			// get request form of catalog
 			this.getRequestForm = async () => {
@@ -369,7 +366,7 @@ window.opera = window.opera || {
 							if (this.formId) {
 								return this.region.rest.post(`/form-service/api/forms/renderer/model?formType=requestForm&isUpdateAction=false&formId=${this.formId}&sourceType=com.vmw.blueprint.version&sourceId=${this.id}/${lastVersionId}`, this.schema).then((form) => {
 									this.form = form.model;
-									return Object.assign(new OperaRequestForm(), {
+									return Object.assign(new RequestForm(), {
 										type: "catalog",
 										caller: this,
 										schema: this.schema,
@@ -378,7 +375,7 @@ window.opera = window.opera || {
 								});
 							} else {
 								this.form = null;
-								return Object.assign(new OperaRequestForm(), {
+								return Object.assign(new RequestForm(), {
 									type: "catalog",
 									caller: this,
 									schema: this.schema,
@@ -394,7 +391,7 @@ window.opera = window.opera || {
 								try {
 									return this.region.rest.post(`/form-service/api/forms/renderer/model?formId=${this.formId}`, {}).then((form) => {
 										this.form = form.model;
-										return Object.assign(new OperaRequestForm(), {
+										return Object.assign(new RequestForm(), {
 											type: "catalog",
 											caller: this,
 											schema: this.schema,
@@ -403,7 +400,7 @@ window.opera = window.opera || {
 									});
 								} catch (e) {
 									this.form = null;
-									return Object.assign(new OperaRequestForm(), {
+									return Object.assign(new RequestForm(), {
 										type: "catalog",
 										caller: this,
 										schema: this.schema,
@@ -412,7 +409,7 @@ window.opera = window.opera || {
 								}
 							} else {
 								this.form = null;
-								return Object.assign(new OperaRequestForm(), {
+								return Object.assign(new RequestForm(), {
 									type: "catalog",
 									caller: this,
 									schema: this.schema,
@@ -431,8 +428,8 @@ window.opera = window.opera || {
 			this.print = () => { console.log(this); };
 		};
 
-		// OperaDeployment
-		function OperaDeployment() {
+		// Deployment
+		function Deployment() {
 
 			// get project of deployment
 			this.getProject = async () => {
@@ -460,9 +457,9 @@ window.opera = window.opera || {
 					let result = [];
 					data.content.forEach((content) => {
 						content.region = this.region;
-						result.push(Object.assign(new OperaResource(), content))
+						result.push(Object.assign(new Resource(), content))
 					});
-					return __set_opera_array_methods__(result, OperaResource);
+					return window.common.util.setArrayFunctions(result, Resource);
 				});
 			};
 
@@ -478,7 +475,7 @@ window.opera = window.opera || {
 				return this.region.rest.post(`/deployment/api/deployments/${this.id}/requests`, inputProperties).then((data) => {
 					return this.region.rest.get(`/deployment/api/deployments/${data.deploymentId}`).then((content) => {
 						content.region = this.region;
-						return Object.assign(new OperaDeployment(), content);
+						return Object.assign(new Deployment(), content);
 					});
 				});
 			};
@@ -487,7 +484,7 @@ window.opera = window.opera || {
 				return this.region.rest.delete(`/deployment/api/deployments/${this.id}`).then((data) => {
 					return this.region.rest.get(`/deployment/api/deployments/${data.deploymentId}`).then((content) => {
 						content.region = this.region;
-						return Object.assign(new OperaDeployment(), content);
+						return Object.assign(new Deployment(), content);
 					});
 				});
 			};
@@ -499,8 +496,8 @@ window.opera = window.opera || {
 			this.print = () => { console.log(this); };
 		};
 
-		// OperaResource
-		function OperaResource() {
+		// Resource
+		function Resource() {
 
 			// get project of resource
 			this.getProject = async () => {
@@ -511,7 +508,7 @@ window.opera = window.opera || {
 			// get deployment of resource
 			this.getDeployment = async () => {
 				return this.region.rest.get(`/deployment/api/resources/${this.id}}?expand=deployment`).then((data) => {
-					if (data.deployment) { return this.region.rest.get(`/deployment/api/deployments/${data.deployment.id}`).then((data) => { return Object.assign(new OperaDeployment(), data); }); }
+					if (data.deployment) { return this.region.rest.get(`/deployment/api/deployments/${data.deployment.id}`).then((data) => { return Object.assign(new Deployment(), data); }); }
 					else { throw "could not get deployment: this resource may be out of deployment scopes"; }
 				});
 			};
@@ -525,10 +522,10 @@ window.opera = window.opera || {
 							content.region = this.region;
 							content.resource = this;
 							content.displayName = window.opera.resourceActions[content.id];
-							result.push(Object.assign(new OperaAction(), content));
+							result.push(Object.assign(new Action(), content));
 						} else { console.warn("could not support action", content); }
 					});
-					return __set_opera_array_methods__(result, OperaAction);
+					return window.common.util.setArrayFunctions(result, Action);
 				});
 			};
 
@@ -546,13 +543,13 @@ window.opera = window.opera || {
 			this.print = () => { console.log(this); };
 		};
 
-		// OperaAction
-		function OperaAction() {
+		// Action
+		function Action() {
 
 			// get request form of action
 			this.getRequestForm = async () => {
 				return this.region.rest.get(`/deployment/api/resources/${this.resource.id}/actions/${this.id}`).then((data) => {
-					return Object.assign(new OperaRequestForm(), {
+					return Object.assign(new RequestForm(), {
 						type: "action",
 						caller: this,
 						schema: data.schema ? data.schema : null,
@@ -568,8 +565,24 @@ window.opera = window.opera || {
 			this.print = () => { console.log(this); };
 		};
 
-		// OperaRequestForm
-		function OperaRequestForm() {
+		// RequestForm
+		function RequestForm() {
+
+			this.render = async (id, type, parameters, dataSource, isMultiple) => {
+				if (!dataSource) { dataSource = "scriptAction"; }
+				if (!isMultiple) { isMultiple = false; }
+				return this.region.rest.post(`/form-service/api/forms/renderer/external-values`, [{
+					uri: id,
+					dataSource: dataSource,
+					parameters: parameters,
+					fieldType: {
+						dataType: type,
+						isMultiple: isMultiple
+					}
+				}]).then((data) => {
+					return data[0].data;
+				});
+			};
 
 			// submit request data
 			this.submit = async (inputProperties) => {
@@ -578,7 +591,7 @@ window.opera = window.opera || {
 						return this.region.rest.post(`/catalog/api/items/${this.caller.id}/request`, inputProperties).then((data) => {
 							return this.region.rest.get(`/deployment/api/deployments/${data[0].deploymentId}`).then((content) => {
 								content.region = this.region;
-								return Object.assign(new OperaDeployment(), content);
+								return Object.assign(new Deployment(), content);
 							});
 						});
 					case "action":
@@ -586,7 +599,7 @@ window.opera = window.opera || {
 						return this.region.rest.post(`/deployment/api/resources/${this.caller.resource.id}/requests`, inputProperties).then((data) => {
 							return this.region.rest.get(`/deployment/api/resources/${data.resourceIds[0]}`).then((content) => {
 								content.region = this.region;
-								return Object.assign(new OperaResource(), content);
+								return Object.assign(new Resource(), content);
 							});
 						});
 				}
@@ -603,86 +616,6 @@ window.opera = window.opera || {
 
 			// print to console
 			this.print = () => { console.log(this); };
-		};
-
-		// abstract of aria object array
-		function __set_opera_array_methods__(arr, obj) {
-
-			// get length
-			arr.len = () => { return arr.length; };
-
-			// check empty
-			arr.empty = () => {
-				if (arr.len() == 0) { return true; }
-				else { return false; }
-			};
-
-			// find one object by id
-			arr.findById = (id) => {
-				arr.forEach((content) => { if (id == content.id) { return content; } });
-				return None
-			};
-
-			// get list of name included
-			arr.searchByName = (name) => {
-				let result = [];
-				arr.forEach((content) => { if (content.name.indexOf(name) > -1) { result.push(content); } });
-				return __set_opera_array_methods__(result, arr.obj);
-			};
-
-			// get list of match value at specific field
-			arr.searchByField = (field, value) => {
-				let result = [];
-				arr.forEach((content) => { if (value == content[field]) { result.push(content); } });
-				return __set_opera_array_methods__(result, arr.obj);
-			};
-
-			// sort asc by field
-			arr.sortAscBy = (field) => {
-				if (!arr.empty()) {
-					let val = arr[0][field]
-					if (typeof val == "string") {
-						arr.sort((a, b) => {
-							let aval = a[field];
-							let bval = b[field];
-							return aval < bval ? -1 : aval > bval ? 1 : 0;
-						});
-					} else if (typeof val == "number") {
-						arr.sort((a, b) => { return a[field] - b[field]; });
-					} else {
-						console.error("could not sort", arr);
-					}
-				}
-				return arr;
-			};
-
-			// sort desc by field
-			arr.sortDescBy = (field) => {
-				if (!arr.empty()) {
-					let val = arr[0][field]
-					if (typeof val == "string") {
-						arr.sort((a, b) => {
-							let aval = a[field];
-							let bval = b[field];
-							return aval > bval ? -1 : aval < bval ? 1 : 0;
-						});
-					} else if (typeof val == "number") {
-						arr.sort((a, b) => { return b[field] - a[field]; });
-					} else {
-						console.error("could not sort", arr);
-					}
-				}
-				return arr
-			};
-
-			// print to console
-			arr.print = () => {
-				if (arr.empty()) { console.log(`${arr.obj.name}s is empty array`); }
-				else { console.log(`${arr.obj.name}s`, arr); }
-			};
-
-			arr.obj = obj;
-			return arr;
 		};
 
 		return window.opera;
