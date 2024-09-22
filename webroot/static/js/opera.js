@@ -27,6 +27,7 @@ window.Opera = window.Opera || {
 				}).then((res) => {
 					if (res.ok) { return res.json(); }
 					else {
+						console.log(res);
 						Common.Session.Cookie.del("ARIA_ENDPOINT_ID");
 						window.location.replace("/aria/auth/login");
 						throw "break for aria authorization";
