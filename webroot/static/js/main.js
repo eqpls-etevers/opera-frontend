@@ -26,10 +26,13 @@ Opera.init(async () => { // main task
 	projects.forEach(async (project) => { // iterate project list by ".forEach(async (item) => { ... })" code format
 		let catalogs = await project.getCatalogs(); // get catalog list by "await" async code format from a project
 		catalogs.print(); // print catalog list to console
+
+		/*
 		catalogs.forEach(async (catalog) => { // iterate catalog list by ".forEach(async (item) => { ... }" code format
 			let form = await catalog.getRequestForm(); // get a request form by "await" async code format from a catalog
 			form.print(); // print request form to console
 		});
+
 		project.getDeployments().then((deployments) => { // get deployment list by ".then((items) => { ... })" async code format from a project
 			deployments.print(); // print deployment list to console
 			for (let i = 0; i < deployments.len(); i++) { // iterate deployment list by "for" code format
@@ -47,6 +50,7 @@ Opera.init(async () => { // main task
 				});
 			}
 		});
+		*/
 	});
 
 }).login(); // login(check auth or redirect to login page) and execute the "main" task
