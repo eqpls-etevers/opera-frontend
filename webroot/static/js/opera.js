@@ -1,28 +1,28 @@
-window.opera = window.opera || {
+window.Opera = window.Opera || {
 	init: (main) => {
 		// initialize common lib
-		window.common.init(main);
+		Common.init(main);
 
 		// login
-		window.opera.login = () => {
-			window.common.login();
+		window.Opera.login = () => {
+			Common.login();
 		};
 
 		// logout
-		window.opera.logout = () => {
-			window.common.util.delCookie("ARIA_ENDPOINT_ID");
-			window.common.logout();
+		window.Opera.logout = () => {
+			window.Common.Session.Cookie.del("ARIA_ENDPOINT_ID");
+			window.Common.logout();
 		};
 
-		window.common.auth.loginServiceProviders = async () => {
-			let endpointId = window.common.util.getCookie("ARIA_ENDPOINT_ID");
+		Common.Auth.loginServiceProviders = async () => {
+			let endpointId = Common.Session.Cookie.get("ARIA_ENDPOINT_ID");
 			if (endpointId) {
 				return fetch(`/uerp/v1/aria/endpoint/${endpointId}`, {
-					headers: window.common.auth.headers
+					headers: Common.Auth.headers
 				}).then((res) => {
 					if (res.ok) { return res.json(); }
 					else {
-						window.common.util.delCookie("ARIA_ENDPOINT_ID");
+						Common.Session.Cookie.del("ARIA_ENDPOINT_ID");
 						window.location.replace("/aria/auth/login");
 						throw "break for aria authorization";
 					}
@@ -33,18 +33,18 @@ window.opera = window.opera || {
 						regions.hostnames.push(region.hostname);
 						regions[region.hostname] = region
 					});
-					window.opera.vidm = endpoint.vidm;
-					window.opera.regions = regions;
+					window.Opera.VIDM = endpoint.VIDM;
+					window.Opera.regions = regions;
 				});
 			} else {
 				window.location.replace("/aria/auth/login");
 				throw "break for aria authorization";
 			}
 		};
-		window.common.auth.logoutServiceProviders = async () => { window.common.util.delCookie("ARIA_ENDPOINT_ID"); };
+		Common.Auth.logoutServiceProviders = async () => { Common.Session.Cookie.del("ARIA_ENDPOINT_ID"); };
 
 		// searchable resource type for param "type" at getResources
-		window.opera.resourceType = {
+		window.Opera.resourceType = {
 			"vm": "Cloud.Machine,Cloud.vSphere.Machine",
 			"disk": "Cloud.Volume,Cloud.vSphere.Disk",
 			"network": "Cloud.Network,Cloud.NSX.Network",
@@ -55,7 +55,7 @@ window.opera = window.opera || {
 		};
 
 		// only support action in list
-		window.opera.resourceActions = {
+		window.Opera.resourceActions = {
 
 			// VM
 			"Cloud.vSphere.Machine.Update.Tags": "태그 수정",
@@ -109,12 +109,12 @@ window.opera = window.opera || {
 		};
 
 		// function of getting region list is only sync type
-		window.opera.getRegions = async () => {
+		window.Opera.getRegions = async () => {
 			let result = [];
-			window.opera.regions.hostnames.forEach((hostname) => {
-				result.push(Object.assign(new Region(), window.opera.regions[hostname]));
+			window.Opera.regions.hostnames.forEach((hostname) => {
+				result.push(Object.assign(new Region(), window.Opera.regions[hostname]));
 			});
-			return window.common.util.setArrayFunctions(result, Region);
+			return Common.Util.setArrayFunctions(result, Region);
 		};
 
 		// all functions & objects are async types which must be required result handler (function type) in params
@@ -130,7 +130,7 @@ window.opera = window.opera || {
 						content.region = this;
 						result.push(Object.assign(new Project(), content));
 					});
-					return window.common.util.setArrayFunctions(result, Project);
+					return Common.Util.setArrayFunctions(result, Project);
 				});
 			};
 
@@ -142,7 +142,7 @@ window.opera = window.opera || {
 						content.region = this;
 						result.push(Object.assign(new Catalog(), content));
 					});
-					return window.common.util.setArrayFunctions(result, Catalog);
+					return Common.Util.setArrayFunctions(result, Catalog);
 				});
 			};
 
@@ -164,7 +164,7 @@ window.opera = window.opera || {
 						content.region = this;
 						result.push(Object.assign(new Deployment(), content));
 					});
-					return window.common.util.setArrayFunctions(result, Deployment);
+					return Common.Util.setArrayFunctions(result, Deployment);
 				});
 			};
 
@@ -172,7 +172,7 @@ window.opera = window.opera || {
 			this.getResources = async (type, tag, search, sort) => { // fix to "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported Default value : List [ "type, name,ASC" ]"
 				let query = [];
 				if (type) {
-					if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
+					if (type in window.Opera.resourceType) { query.push(`resourceTypes=${window.Opera.resourceType[type]}`); }
 					else { throw `"${type}" is not support type option`; }
 				}
 				if (tag) { query.push(`tags=${tag}`); }
@@ -191,12 +191,12 @@ window.opera = window.opera || {
 						content.region = this;
 						result.push(Object.assign(new Resource(), content))
 					});
-					return window.common.util.setArrayFunctions(result, Resource);
+					return Common.Util.setArrayFunctions(result, Resource);
 				});
 			};
 
-			// register current region to "window.opera.Region" property
-			this.checkpoint = () => { window.opera.Region = this; };
+			// register current region to "window.Opera.Region" property
+			this.checkpoint = () => { window.Opera.Region = this; };
 
 			// print to console
 			this.print = () => { console.log(this); };
@@ -206,8 +206,8 @@ window.opera = window.opera || {
 			this.rest.get = async (url) => {
 				return fetch(`/aria/aa/${url}`, {
 					headers: {
-						"Authorization": window.common.auth.bearerToken,
-						"AA-Auth": window.opera.regions[this.hostname].accessToken,
+						"Authorization": Common.Auth.bearerToken,
+						"AA-Auth": window.Opera.regions[this.hostname].accessToken,
 						"AA-Host": this.hostname,
 						"Accept": "application/json; charset=utf-8"
 					}
@@ -220,8 +220,8 @@ window.opera = window.opera || {
 				return fetch(`/aria/aa${url}`, {
 					method: "POST",
 					headers: {
-						"Authorization": window.common.auth.bearerToken,
-						"AA-Auth": window.opera.regions[this.hostname].accessToken,
+						"Authorization": Common.Auth.bearerToken,
+						"AA-Auth": window.Opera.regions[this.hostname].accessToken,
 						"AA-Host": this.hostname,
 						"Content-Type": "application/json; charset=utf-8",
 						"Accept": "application/json; charset=utf-8"
@@ -236,8 +236,8 @@ window.opera = window.opera || {
 				return fetch(`/aria/aa${url}`, {
 					method: "PUT",
 					headers: {
-						"Authorization": window.common.auth.bearerToken,
-						"AA-Auth": window.opera.regions[this.hostname].accessToken,
+						"Authorization": Common.Auth.bearerToken,
+						"AA-Auth": window.Opera.regions[this.hostname].accessToken,
 						"AA-Host": this.hostname,
 						"Content-Type": "application/json; charset=utf-8",
 						"Accept": "application/json; charset=utf-8"
@@ -252,8 +252,8 @@ window.opera = window.opera || {
 				return fetch(`/aria/aa${url}`, {
 					method: "PATCH",
 					headers: {
-						"Authorization": window.common.auth.bearerToken,
-						"AA-Auth": window.opera.regions[this.hostname].accessToken,
+						"Authorization": Common.Auth.bearerToken,
+						"AA-Auth": window.Opera.regions[this.hostname].accessToken,
 						"AA-Host": this.hostname,
 						"Content-Type": "application/json; charset=utf-8",
 						"Accept": "application/json; charset=utf-8"
@@ -269,8 +269,8 @@ window.opera = window.opera || {
 				fetch(`/aria/aa${url}`, {
 					method: "DELETE",
 					headers: {
-						"Authorization": window.common.auth.bearerToken,
-						"AA-Auth": window.opera.regions[this.hostname].accessToken,
+						"Authorization": Common.Auth.bearerToken,
+						"AA-Auth": window.Opera.regions[this.hostname].accessToken,
 						"AA-Host": this.hostname,
 						"Accept": "application/json; charset=utf-8"
 					}
@@ -292,7 +292,7 @@ window.opera = window.opera || {
 						content.region = this.region;
 						result.push(Object.assign(new Catalog(), content));
 					});
-					return window.common.util.setArrayFunctions(result, Catalog);
+					return Common.Util.setArrayFunctions(result, Catalog);
 				});
 			};
 
@@ -314,7 +314,7 @@ window.opera = window.opera || {
 						content.region = this.region;
 						result.push(Object.assign(new Deployment(), content));
 					});
-					return window.common.util.setArrayFunctions(result, Deployment);
+					return Common.Util.setArrayFunctions(result, Deployment);
 				});
 			};
 
@@ -322,7 +322,7 @@ window.opera = window.opera || {
 			this.getResources = async (type, tag, search, sort) => { // fix to "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported Default value : List [ "type, name,ASC" ]"
 				let query = [];
 				if (type) {
-					if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
+					if (type in window.Opera.resourceType) { query.push(`resourceTypes=${window.Opera.resourceType[type]}`); }
 					else { throw `"${type}" is not support type option`; }
 				}
 				if (tag) { query.push(`tags=${tag}`); }
@@ -341,12 +341,12 @@ window.opera = window.opera || {
 						content.region = this.region;
 						result.push(Object.assign(new Resource(), content))
 					});
-					return window.common.util.setArrayFunctions(result, Resource);
+					return Common.Util.setArrayFunctions(result, Resource);
 				});
 			};
 
-			// register current project to "window.opera.Project" property
-			this.checkpoint = () => { window.opera.Project = this; };
+			// register current project to "window.Opera.Project" property
+			this.checkpoint = () => { window.Opera.Project = this; };
 
 			// print to console
 			this.print = () => { console.log(this); };
@@ -421,8 +421,8 @@ window.opera = window.opera || {
 				});
 			};
 
-			// register current catalog to "window.opera.Catalog" property
-			this.checkpoint = () => { window.opera.Catalog = this; };
+			// register current catalog to "window.Opera.Catalog" property
+			this.checkpoint = () => { window.Opera.Catalog = this; };
 
 			// print to console
 			this.print = () => { console.log(this); };
@@ -440,7 +440,7 @@ window.opera = window.opera || {
 			this.getResources = async (type, tag, search, sort) => { // fix to "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported Default value : List [ "type, name,ASC" ]"
 				let query = [];
 				if (type) {
-					if (type in window.opera.resourceType) { query.push(`resourceTypes=${window.opera.resourceType[type]}`); }
+					if (type in window.Opera.resourceType) { query.push(`resourceTypes=${window.Opera.resourceType[type]}`); }
 					else { throw `"${type}" is not support type option`; }
 				}
 				if (tag) { query.push(`tags=${tag}`); }
@@ -459,7 +459,7 @@ window.opera = window.opera || {
 						content.region = this.region;
 						result.push(Object.assign(new Resource(), content))
 					});
-					return window.common.util.setArrayFunctions(result, Resource);
+					return Common.Util.setArrayFunctions(result, Resource);
 				});
 			};
 
@@ -489,8 +489,8 @@ window.opera = window.opera || {
 				});
 			};
 
-			// register current deployment to "window.opera.Deployment" property
-			this.checkpoint = () => { window.opera.Deployment = this; };
+			// register current deployment to "window.Opera.Deployment" property
+			this.checkpoint = () => { window.Opera.Deployment = this; };
 
 			// print to console
 			this.print = () => { console.log(this); };
@@ -518,14 +518,14 @@ window.opera = window.opera || {
 				return this.region.rest.get(`/deployment/api/resources/${this.id}/actions`).then((data) => {
 					let result = [];
 					data.forEach((content) => {
-						if (content.id in window.opera.resourceActions) {
+						if (content.id in window.Opera.resourceActions) {
 							content.region = this.region;
 							content.resource = this;
-							content.displayName = window.opera.resourceActions[content.id];
+							content.displayName = window.Opera.resourceActions[content.id];
 							result.push(Object.assign(new Action(), content));
 						} else { console.warn("could not support action", content); }
 					});
-					return window.common.util.setArrayFunctions(result, Action);
+					return Common.Util.setArrayFunctions(result, Action);
 				});
 			};
 
@@ -536,8 +536,8 @@ window.opera = window.opera || {
 				});
 			};
 
-			// register current resource to "window.opera.Resource" property
-			this.checkpoint = () => { window.opera.Resource = this; };
+			// register current resource to "window.Opera.Resource" property
+			this.checkpoint = () => { window.Opera.Resource = this; };
 
 			// print to console
 			this.print = () => { console.log(this); };
@@ -558,8 +558,8 @@ window.opera = window.opera || {
 				});
 			};
 
-			// register current action to "window.opera.Action" property
-			this.checkpoint = () => { window.opera.Action = this; };
+			// register current action to "window.Opera.Action" property
+			this.checkpoint = () => { window.Opera.Action = this; };
 
 			// print to console
 			this.print = () => { console.log(this); };
@@ -611,13 +611,13 @@ window.opera = window.opera || {
 				return "<div>draw is not implemented now</div>";
 			};
 
-			// register current request form to "window.opera.RequestForm" property
-			this.checkpoint = () => { window.opera.RequestForm = this; };
+			// register current request form to "window.Opera.RequestForm" property
+			this.checkpoint = () => { window.Opera.RequestForm = this; };
 
 			// print to console
 			this.print = () => { console.log(this); };
 		};
 
-		return window.opera;
+		return window.Opera;
 	}
 };

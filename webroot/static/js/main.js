@@ -1,14 +1,14 @@
 // javascript here
 
-window.opera.init(async () => { // main task
-	document.getElementById("opera-username").innerText = window.common.auth.username;
-	document.getElementById("opera-userinfo").innerText = JSON.stringify(window.common.auth.userInfo);
-	document.getElementById("opera-access-token").innerText = window.common.auth.accessToken;
-	document.getElementById("vidm-access-token").innerText = window.opera.vidm.accessToken;
+Opera.init(async () => { // main task
+	document.getElementById("opera-username").innerText = Common.Auth.username;
+	document.getElementById("opera-userinfo").innerText = JSON.stringify(Common.Auth.UserInfo);
+	document.getElementById("opera-access-token").innerText = Common.Auth.accessToken;
+	document.getElementById("vidm-access-token").innerText = Opera.VIDM.accessToken;
 
 	let regionsDom = document.getElementById("regions-access-tokens"); // get the region information dom
 
-	let regions = await window.opera.getRegions(); // get region list by "await" async code format
+	let regions = await Opera.getRegions(); // get region list by "await" async code format
 	for (let i = 0; i < regions.len(); i++) { // iterate region list by "for" code format
 		let region = regions[i]; // set a region
 		let dom = document.createElement('p'); // create "p" tag dom
@@ -16,8 +16,8 @@ window.opera.init(async () => { // main task
 		regionsDom.appendChild(dom); // append a created "p" tag dom to region information dom
 	}
 
-	let buckets = await window.module.data.getBuckets();
-	buckets.print();
+	//let buckets = await window.module.data.getBuckets();
+	//buckets.print();
 
 	/*
 	regions[0].checkpoint(); // set first region to checkpoint "window.opera.Region"

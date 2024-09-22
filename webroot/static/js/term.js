@@ -1,20 +1,20 @@
-window.module = window.module || {};
-window.module.term = window.module.term || {
+window.Module = window.Module || {};
+window.Module.Term = window.Module.Term || {
 	init: () => {
-		window.module.term.isAutoLogin = false;
-		console.log("(window.module.term) start");
-		window.module.term.requests = [];
+		window.Module.Term.isAutoLogin = false;
+		console.log("(Module.Term) start");
+		window.Module.Term.requests = [];
 
 		// called from main index
-		window.module.term.openSSH = (username, hostname, hostport, target, options) => {
-			if (!username) { throw "(window.module.term.openSSH) username parameter is required"; }
-			if (!hostname) { throw "(window.module.term.openSSH) hostname parameter is required"; }
+		window.Module.Term.openSSH = (username, hostname, hostport, target, options) => {
+			if (!username) { throw "(module.term.openSSH) username parameter is required"; }
+			if (!hostname) { throw "(module.term.openSSH) hostname parameter is required"; }
 			hostport = hostport ? hostport : 22;
 			target = target ? target : "_blank";
 			options = options ? options : "menubar=no,status=no,titlebar=no,toolbar=no";
-			window.common.util.setCookie("Guac-Req", JSON.stringify({
+			Common.Session.Cookie.set("Guac-Req", JSON.stringify({
 				type: "ssh",
-				account: window.common.auth.username,
+				account: Common.Auth.username,
 				username: username,
 				hostname: hostname,
 				hostport: hostport
@@ -23,13 +23,13 @@ window.module.term = window.module.term || {
 		};
 
 		// called from term index
-		window.module.term.connect = (dom) => {
-			let token = window.common.util.getCookie("Guac-Token");
-			let connection = window.common.util.getCookie("Guac-Req");
+		window.Module.Term.connect = (dom) => {
+			let token = Common.Session.Cookie.get("Guac-Token");
+			let connection = Common.Session.Cookie.get("Guac-Req");
 			if (connection) { connection = JSON.parse(connection); }
 			else {
-				window.module.term.closeByException("연결 요청 정보가 없습니다");
-				throw "(window.module.term.connect) could not find connection info";
+				window.Module.Term.closeByException("연결 요청 정보가 없습니다");
+				throw "(module.term.connect) could not find connection info";
 			}
 
 			if (token) {
@@ -37,7 +37,7 @@ window.module.term = window.module.term || {
 					headers: { "Guacamole-Token": token }
 				}).then((res) => {
 					if (res.ok) {
-						window.common.util.delCookie("Guac-Req", "/static/html/terminal.html");
+						Common.Session.Cookie.del("Guac-Req", "/static/html/terminal.html");
 						if (connection.type == "ssh") {
 							fetch(`/guacamole/api/session/ext/quickconnect/create?token=${token}`, {
 								method: "POST",
@@ -47,19 +47,19 @@ window.module.term = window.module.term || {
 								if (res.ok) { return res.json(); }
 								throw res;
 							}).then((data) => {
-								window.module.term.connectToSSH(dom, data.identifier, token);
+								window.Module.Term.connectToSSH(dom, data.identifier, token);
 							});
 						} else {
-							window.module.term.closeByException("지원하지 않는 연결 형식 입니다");
-							throw "(window.module.term.connect) could not support connection type";
+							window.Module.Term.closeByException("지원하지 않는 연결 형식 입니다");
+							throw "(module.term.connect) could not support connection type";
 						}
 					} else {
-						window.common.util.delCookie("Guac-Token", "/static/html/terminal.html");
+						Common.Session.Cookie.del("Guac-Token", "/static/html/terminal.html");
 						window.location.replace("/guacamole/api/ext/openid/login");
 					}
 				});
 			} else {
-				let hash = window.common.util.getHashMap();
+				let hash = Common.Session.Hash.get();
 				if (hash.id_token) {
 					fetch("/guacamole/api/tokens", {
 						method: "POST",
@@ -72,9 +72,9 @@ window.module.term = window.module.term || {
 						if (res.ok) { return res.json(); }
 						throw res;
 					}).then((guacamole) => {
-						window.common.util.delCookie("Guac-Req", "/static/html/terminal.html");
+						Common.Session.Cookie.del("Guac-Req", "/static/html/terminal.html");
 						token = guacamole.authToken;
-						window.common.util.setCookie("Guac-Token", token, null, "/static/html/terminal.html");
+						Common.Session.Cookie.set("Guac-Token", token, null, "/static/html/terminal.html");
 						if (connection.type == "ssh") {
 							fetch(`/guacamole/api/session/ext/quickconnect/create?token=${token}`, {
 								method: "POST",
@@ -84,11 +84,11 @@ window.module.term = window.module.term || {
 								if (res.ok) { return res.json(); }
 								throw res;
 							}).then((data) => {
-								window.module.term.connectToSSH(dom, data.identifier, token);
+								window.Module.Term.connectToSSH(dom, data.identifier, token);
 							});
 						} else {
-							window.module.term.closeByException("지원하지 않는 연결 형식 입니다");
-							throw "(window.module.term.connect) could not support connection type";
+							window.Module.Term.closeByException("지원하지 않는 연결 형식 입니다");
+							throw "(module.term.connect) could not support connection type";
 						}
 					});
 				} else {
@@ -97,7 +97,7 @@ window.module.term = window.module.term || {
 			}
 		};
 
-		window.module.term.connectToSSH = (dom, id, token) => {
+		window.Module.Term.connectToSSH = (dom, id, token) => {
 			let guac = new Guacamole.Client(new Guacamole.WebSocketTunnel('/guacamole/websocket-tunnel'));
 			let guacDisp = guac.getDisplay().getElement();
 			dom.appendChild(guacDisp);
@@ -109,7 +109,7 @@ window.module.term = window.module.term || {
 			guac.connect(options);
 			guac.onerror = (error) => {
 				console.error(error);
-				window.module.term.closeByException("문제가 발생하여 연결하지 못했습니다");
+				window.Module.Term.closeByException("문제가 발생하여 연결하지 못했습니다");
 			};
 			guac.onstatechange = (state) => {
 				switch (state) {
@@ -146,11 +146,11 @@ window.module.term = window.module.term || {
 			guacKbd.onkeyup = (k) => guac.sendKeyEvent(0, k);
 		};
 
-		window.module.term.closeByException = (message) => {
+		window.Module.Term.closeByException = (message) => {
 			window.alert(message);
 			window.close();
 		};
 
-		console.log("(window.module.term) ready");
+		console.log("(Module.Term) ready");
 	}
 };

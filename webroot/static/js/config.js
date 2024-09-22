@@ -1,6 +1,11 @@
-window.config = window.config || {
+window.Config = window.Config || {
+	title: "Opera",
 	tenant: "opera",
 	domain: "sddc.lab",
-	endpoint: "portal-web.sddc.lab",
-	uerpUrl: "/uerp/v1",
+	endpoint: "portal.sddc.lab",
+	version: 1,
+	uerp: "uerp",
+	databases: {
+		EP: ["Temp"]
+	}
 };
