@@ -33,7 +33,6 @@ window.Opera = window.Opera || {
 						throw "break for aria authorization";
 					}
 				}).then((endpoint) => {
-					console.log(endpoint);
 					let regions = {};
 					regions.hostnames = [];
 					endpoint.regions.forEach((region) => {

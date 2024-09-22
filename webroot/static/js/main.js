@@ -19,10 +19,9 @@ Opera.init(async () => { // main task
 	//let buckets = await window.module.data.getBuckets();
 	//buckets.print();
 
-	/*
 	regions[0].checkpoint(); // set first region to checkpoint "window.opera.Region"
 
-	let projects = await window.opera.Region.getProjects(); // get project list by "await" async code format
+	let projects = await Opera.Region.getProjects(); // get project list by "await" async code format
 	projects.print(); // print project list to console
 	projects.forEach(async (project) => { // iterate project list by ".forEach(async (item) => { ... })" code format
 		let catalogs = await project.getCatalogs(); // get catalog list by "await" async code format from a project
@@ -31,7 +30,6 @@ Opera.init(async () => { // main task
 			let form = await catalog.getRequestForm(); // get a request form by "await" async code format from a catalog
 			form.print(); // print request form to console
 		});
-
 		project.getDeployments().then((deployments) => { // get deployment list by ".then((items) => { ... })" async code format from a project
 			deployments.print(); // print deployment list to console
 			for (let i = 0; i < deployments.len(); i++) { // iterate deployment list by "for" code format
@@ -50,5 +48,5 @@ Opera.init(async () => { // main task
 			}
 		});
 	});
-	*/
+
 }).login(); // login(check auth or redirect to login page) and execute the "main" task
