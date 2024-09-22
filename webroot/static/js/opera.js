@@ -33,7 +33,7 @@ window.Opera = window.Opera || {
 						regions.hostnames.push(region.hostname);
 						regions[region.hostname] = region
 					});
-					window.Opera.VIDM = endpoint.VIDM;
+					window.Opera.VIDM = endpoint.vidm;
 					window.Opera.regions = regions;
 				});
 			} else {
