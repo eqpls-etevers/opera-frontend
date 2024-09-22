@@ -14,7 +14,7 @@ window.Opera = window.Opera || {
 			window.Common.logout();
 		};
 
-		Common.Auth.loginServiceProviders = async () => {
+		Common.loginServiceProviders = async () => {
 			console.log("loginServiceProviders");
 
 			let endpointId = Common.Session.Cookie.get("ARIA_ENDPOINT_ID");
@@ -47,7 +47,7 @@ window.Opera = window.Opera || {
 				throw "break for aria authorization";
 			}
 		};
-		Common.Auth.logoutServiceProviders = async () => { Common.Session.Cookie.del("ARIA_ENDPOINT_ID"); };
+		Common.logoutServiceProviders = async () => { Common.Session.Cookie.del("ARIA_ENDPOINT_ID"); };
 
 		// searchable resource type for param "type" at getResources
 		window.Opera.resourceType = {
