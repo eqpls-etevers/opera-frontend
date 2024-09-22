@@ -15,7 +15,12 @@ window.Opera = window.Opera || {
 		};
 
 		Common.Auth.loginServiceProviders = async () => {
+			console.log("loginServiceProviders");
+
 			let endpointId = Common.Session.Cookie.get("ARIA_ENDPOINT_ID");
+
+			console.log(endpointId);
+
 			if (endpointId) {
 				return fetch(`/uerp/v1/aria/endpoint/${endpointId}`, {
 					headers: Common.Auth.headers
@@ -27,6 +32,7 @@ window.Opera = window.Opera || {
 						throw "break for aria authorization";
 					}
 				}).then((endpoint) => {
+					console.log(endpoint);
 					let regions = {};
 					regions.hostnames = [];
 					endpoint.regions.forEach((region) => {
