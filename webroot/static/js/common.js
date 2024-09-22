@@ -231,6 +231,7 @@ window.Common = window.Common || {
 						"Content-Type": "application/json; charset=utf-8",
 						"Accept": "application/json; charset=utf-8"
 					};
+					console.log("prev loginServiceProviders");
 					return window.Common.loginServiceProviders().then(window.Common.Auth.checkUserInfo);
 				};
 				window.Common.Auth.postLogin().then(() => {
