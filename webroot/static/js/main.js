@@ -17,7 +17,7 @@ Opera.init(async () => { // main task
 	}
 
 	let buckets = await Module.Data.getBuckets();
-	buckets.print();
+	console.log(buckets);
 
 	regions[0].checkpoint(); // set first region to checkpoint "window.opera.Region"
 	let projects = await Opera.Region.getProjects(); // get project list by "await" async code format
