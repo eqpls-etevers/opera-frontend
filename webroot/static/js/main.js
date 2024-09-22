@@ -16,11 +16,10 @@ Opera.init(async () => { // main task
 		regionsDom.appendChild(dom); // append a created "p" tag dom to region information dom
 	}
 
-	//let buckets = await window.module.data.getBuckets();
-	//buckets.print();
+	let buckets = await Module.Data.getBuckets();
+	buckets.print();
 
 	regions[0].checkpoint(); // set first region to checkpoint "window.opera.Region"
-
 	let projects = await Opera.Region.getProjects(); // get project list by "await" async code format
 	projects.print(); // print project list to console
 	projects.forEach(async (project) => { // iterate project list by ".forEach(async (item) => { ... })" code format
