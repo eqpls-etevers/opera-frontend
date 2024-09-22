@@ -150,6 +150,13 @@ window.Module.Data = window.Module.Data || {
 					};
 				});
 			};
+			this.createFolder = async (name) => {
+				return new Folder({
+					last_modified: "",
+					name: `${name}/`,
+					bucket: this
+				});
+			};
 			this.upload = async (files) => {
 				let results = [];
 				if (files.length > 0) {
