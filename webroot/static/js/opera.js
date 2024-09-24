@@ -4,8 +4,8 @@ window.Opera = window.Opera || {
 		Common.init(main);
 
 		// login
-		window.Opera.login = () => {
-			Common.login();
+		window.Opera.login = (redirectUri) => {
+			Common.login(redirectUri);
 		};
 
 		// logout
