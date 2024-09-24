@@ -16,19 +16,21 @@ Opera.init(async () => { // main task
 		regionsDom.appendChild(dom); // append a created "p" tag dom to region information dom
 	}
 
-	let buckets = await Module.Data.getBuckets();
-	console.log(buckets);
-	await Module.Data.createUserBucket("myBucket", 1); // create private bucket with 1GB quota
-	buckets = await Module.Data.getBuckets();
-	console.log("before deleted", buckets);
-	for (let i = 0; i < buckets.user.len(); i++) {
-		let bucket = buckets.user[i];
-		let nodes = await bucket.getNodes();
-		console.log(nodes);
-		await bucket.delete();
-	}
-	buckets = await Module.Data.getBuckets();
-	console.log("after deleted", buckets);
+	try {
+		let buckets = await Module.Data.getBuckets(); // get my bucket list
+		console.log(buckets);
+		await Module.Data.createUserBucket("myBucket", 1); // create private bucket with 1GB quota
+		buckets = await Module.Data.getBuckets();
+		console.log("before deleted", buckets);
+		for (let i = 0; i < buckets.user.len(); i++) {
+			let bucket = buckets.user[i];
+			let nodes = await bucket.getNodes();
+			console.log(nodes);
+			await bucket.delete();
+		}
+		buckets = await Module.Data.getBuckets();
+		console.log("after deleted", buckets);
+	} catch (e) { console.error(e); }
 
 	regions[0].checkpoint(); // set first region to checkpoint "window.opera.Region"
 	let projects = await Opera.Region.getProjects(); // get project list by "await" async code format
